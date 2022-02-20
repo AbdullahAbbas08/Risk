@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Risk_Data_Access_Layer;
 
@@ -11,9 +12,10 @@ using Risk_Data_Access_Layer;
 namespace Risk_Data_Access_Layer.Migrations
 {
     [DbContext(typeof(RiskDbContext))]
-    partial class RiskDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220220115946_AddCustomerTableAndMobileNumbersTable")]
+    partial class AddCustomerTableAndMobileNumbersTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,31 +172,6 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Risk_Data_Access_Layer.Models.AgentClient", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("AgentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AgentId");
-
-                    b.HasIndex("ClientId");
-
-                    b.ToTable("AgentClients");
-                });
-
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -273,51 +250,6 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("Risk_Data_Access_Layer.Models.Call", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<byte>("CallType")
-                        .HasColumnType("tinyint");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("End")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Reason")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Satisfy")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("SourceMarketId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Start")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SourceMarketId");
-
-                    b.ToTable("Call");
-                });
-
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.CallReason", b =>
                 {
                     b.Property<int>("Id")
@@ -361,33 +293,6 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.HasIndex("GovernorateId");
 
                     b.ToTable("Cities", "dbo");
-                });
-
-            modelBuilder.Entity("Risk_Data_Access_Layer.Models.ClientCall", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("CallId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("string")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CallId");
-
-                    b.HasIndex("string");
-
-                    b.ToTable("ClientCalls");
                 });
 
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.ClientType", b =>
@@ -490,9 +395,6 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.Property<int>("CityId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime2");
-
                     b.Property<byte>("Gender")
                         .HasColumnType("tinyint");
 
@@ -584,36 +486,6 @@ namespace Risk_Data_Access_Layer.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Risk_Data_Access_Layer.Models.AgentClient", b =>
-                {
-                    b.HasOne("Risk_Data_Access_Layer.Models.Employee", "Employees")
-                        .WithMany()
-                        .HasForeignKey("AgentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Risk_Data_Access_Layer.Models.Client", "Clients")
-                        .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Clients");
-
-                    b.Navigation("Employees");
-                });
-
-            modelBuilder.Entity("Risk_Data_Access_Layer.Models.Call", b =>
-                {
-                    b.HasOne("Risk_Data_Access_Layer.Models.SourceMarketing", "SourceMarketing")
-                        .WithMany()
-                        .HasForeignKey("SourceMarketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SourceMarketing");
-                });
-
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.City", b =>
                 {
                     b.HasOne("Risk_Data_Access_Layer.Models.Governorate", "Governorate")
@@ -623,23 +495,6 @@ namespace Risk_Data_Access_Layer.Migrations
                         .IsRequired();
 
                     b.Navigation("Governorate");
-                });
-
-            modelBuilder.Entity("Risk_Data_Access_Layer.Models.ClientCall", b =>
-                {
-                    b.HasOne("Risk_Data_Access_Layer.Models.Call", "Call")
-                        .WithMany()
-                        .HasForeignKey("CallId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Risk_Data_Access_Layer.Models.Client", "Client")
-                        .WithMany()
-                        .HasForeignKey("string");
-
-                    b.Navigation("Call");
-
-                    b.Navigation("Client");
                 });
 
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.Client", b =>

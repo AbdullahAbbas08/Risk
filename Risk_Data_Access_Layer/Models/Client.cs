@@ -14,7 +14,7 @@ namespace Risk_Data_Access_Layer.Models
         public int CityId { get; set; }
 
         [ForeignKey("CityId")]
-        public  City City { get; set; }
+        public City City { get; set; }
 
         public int ClientTypeId { get; set; } 
 

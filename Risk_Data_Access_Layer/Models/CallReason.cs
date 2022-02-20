@@ -1,4 +1,6 @@
-﻿namespace Risk_Data_Access_Layer.Models
+﻿using System.ComponentModel;
+
+namespace Risk_Data_Access_Layer.Models
 {
     [Table(name: "CallReasons", Schema = "dbo")]
     public class CallReason
@@ -17,7 +19,6 @@
         public int Order { get; set; }
 
         [JsonIgnore]
-        public  ICollection<Client> Clients { get; set; }
+        public ICollection<Client> Clients { get; set; }
     }
 }
- 

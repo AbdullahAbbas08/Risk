@@ -10,7 +10,7 @@
         [Column(TypeName = "varchar(11)")]
         [MaxLength(11)]
         [Display(Name = "Mobile Number")]
-        public string Phone { get; set; }
+        public string Mobile { get; set; } 
 
         [Required]
         [Column(TypeName = "nvarchar(500)")]

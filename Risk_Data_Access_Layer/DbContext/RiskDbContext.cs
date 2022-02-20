@@ -14,7 +14,12 @@
         public DbSet<ClientType> ClientTypes { get; set; }
         public DbSet<Employee> employees { get; set; }
         public DbSet<SourceMarketing> sourceMarketings  { get; set; }
-
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<MobilePhone> MobilePhones { get; set; } 
+        public DbSet<Call> Call { get; set; } 
+        public DbSet<AgentClient> AgentClients { get; set; }   
+        public DbSet<ClientCall> ClientCalls { get; set; }   
+         
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
