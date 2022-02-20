@@ -1,0 +1,16 @@
+﻿using Risk_Business_Layer.IUnitOfWork.ICrud;
+
+namespace Risk_Business_Layer.IUnitOfWork.IUnitOfWork_Crud
+{
+    public interface IUnitOfWork_Crud
+    {
+        ICrud<CallReason> CallReason { get; }
+        ICrud<City> City { get;  }
+        ICrud<Governorate> Governorate { get; }
+        ICrud<ClientType> ClientType { get; }
+        ICrud<Client> Client { get;  }
+        ICrud<Employee> Employee { get;  }
+        ICrud<SourceMarketing> SourceMarketing  { get; }
+        Task SaveChangesAsync();
+    }
+}
