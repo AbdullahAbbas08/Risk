@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using Risk_Business_Layer.IRepositories.ICrud;
 using Risk_Business_Layer.IUnitOfWork.ICrud;
 using Risk_Business_Layer.IUnitOfWork.IUnitOfWork_Crud;
 using Risk_Business_Layer.Repositories.Crud;
+using Risk_Business_Layer.Seeds;
 using Risk_Business_Layer.UnitOfWork.UnitOfWork_Crud;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,46 +25,51 @@ builder.Services.AddTransient<IClientTypeBusiness<ClientType>, ClientTypeBusines
 
 #region Map Classes Into Appsettings
 builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
-    #endregion
+#endregion
 
-    #region Apply Identity 
-        builder.Services.AddIdentityCore<ApplicationUser>().AddEntityFrameworkStores<RiskDbContext>();
-    #endregion
+#region Apply Identity 
+builder.Services.AddIdentity<Employee,IdentityRole>().AddEntityFrameworkStores<RiskDbContext>();
+#endregion
 
-    #region Add Context
-        builder.Services.AddDbContext<RiskDbContext>(options =>options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-    #endregion
+#region Add Context
+builder.Services.AddDbContext<RiskDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+#endregion
 
-    #region Swagger Configurations
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(options =>
-        {
+#region Mapped Classes 
+builder.Services.AddScoped<IAuthService, AuthService>();
+#endregion
+
+#region Swagger Configurations
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
             //Swagger Header
             options.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Version = "v1",
-                Title = "Risk API",
-                Description = "Description Not Added Yet "
-            });
+    {
+        Version = "v1",
+        Title = "Risk API",
+        Description = "Description Not Added Yet "
+    });
 
             //Swagger Definition For All 
-            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme { 
-            Name = "Authorization",
-            Type =SecuritySchemeType.ApiKey,
-            Scheme = "Bearer",
-            BearerFormat ="JWT",
-            In = ParameterLocation.Header,
-                Description = "JWT Authorization header using the Bearer scheme. \r\n\r\nExample: \"Bearer 12345abcdef\""
-            });
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\nExample: \"Bearer 12345abcdef\""
+    });
 
             //Swagger Definition For One Controller
             options.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
+    {
                 {
                     new OpenApiSecurityScheme
                     {
-                        Reference = new OpenApiReference { 
+                        Reference = new OpenApiReference {
                         Type = ReferenceType.SecurityScheme,
                         Id = "Bearer"
                         },
@@ -71,14 +78,40 @@ builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
                     },
                     new List<string>()
                 }
-            });
-        }) ;
-    #endregion
+    });
+});
+#endregion
 
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+#region Seed Users And Roles
+using var scope = app.Services.CreateScope();
+
+var services = scope.ServiceProvider;
+var loggerFactory = services.GetRequiredService<ILoggerProvider>();
+var logger = loggerFactory.CreateLogger("app");
+
+try
+{
+    var userManager = services.GetRequiredService<UserManager<Employee>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+    await DefaultRoles.SeedRole(roleManager);
+    await DefaultUsers.SeedAgentUser(userManager);
+    await DefaultUsers.SeedAdminUser(userManager, roleManager);
+
+    logger.LogInformation("Data seeded");
+    logger.LogInformation("Application Started");
+}
+catch (System.Exception ex)
+{
+    logger.LogWarning(ex, "An error occurred while seeding data");
+}
+
+#endregion
+
+#region Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -86,9 +119,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+#endregion
 
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 app.Run();

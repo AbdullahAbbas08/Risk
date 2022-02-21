@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Risk_Business_Layer.Constants
+﻿namespace Risk_Business_Layer.Constants
 {
     public static class Permissions
     {
@@ -18,6 +12,5 @@ namespace Risk_Business_Layer.Constants
                 $"Permissions.{module}.Delete"
             };
         }
-
     }
 }

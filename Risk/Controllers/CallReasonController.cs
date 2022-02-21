@@ -1,7 +1,11 @@
-﻿using Risk_Business_Layer.IRepositories.ICrud;
+﻿using Microsoft.AspNetCore.Authorization;
+using Risk_Business_Layer.Constants;
+using Risk_Business_Layer.IRepositories.ICrud;
+using Risk_Data_Access_Layer.Constants;
 
 namespace Risk.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class CallReasonController : ControllerBase
@@ -19,6 +23,8 @@ namespace Risk.Controllers
         /// <param name="id">ID for CallReason</param>
         /// <returns></returns>
         // GET: api/CallReason/5
+
+        //[Authorize(Roles = Roles.Admin + "," + Roles.Agent)]
         [HttpGet()]
         public async Task<ActionResult<IEnumerable<CallReason>>> GetCallReason(int? id = null)
         {

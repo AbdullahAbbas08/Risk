@@ -1,10 +1,10 @@
 ﻿namespace Risk_Data_Access_Layer.Constants
 { 
-    public enum Roles
+    public static class Roles
     {
-        Admin,
-        Agent,
-        Client,
-        Customer
+        public const string Admin = "Admin";
+        public const string Agent = "Agent";
+        public const string Client = "Client";
+        public const string Customer = "Customer"; 
     }
 }

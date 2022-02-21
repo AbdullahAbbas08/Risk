@@ -1,6 +1,6 @@
 ﻿namespace Risk_Data_Access_Layer
 {
-    public class RiskDbContext :IdentityDbContext<ApplicationUser>
+    public class RiskDbContext : IdentityDbContext<ApplicationUser, IdentityRole, string>
     {
         public RiskDbContext(DbContextOptions<RiskDbContext> options):base(options)
         {
