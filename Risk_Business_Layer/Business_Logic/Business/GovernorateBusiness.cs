@@ -1,10 +1,6 @@
 ﻿using Risk_Business_Layer.IRepositories.ICrud;
 using Risk_Business_Layer.IUnitOfWork.IUnitOfWork_Crud;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Risk_Domain_Layer.DTO_S.Governorate;
 
 namespace Risk_Business_Layer.Repositories.Crud
 {
@@ -17,15 +13,17 @@ namespace Risk_Business_Layer.Repositories.Crud
             this.unitOfWork = unitOfWork;
         }
 
-        public async Task AddAsync(Governorate governorate)
+        public async Task<Governorate> AddAsync(AddGovernorateDto governorate)
         {
             try
             {
-                if (governorate is not null)
+                Governorate ReturnedGovernorate = new Governorate(); 
+                if(!string.IsNullOrEmpty(governorate.Title))
                 {
-                    await unitOfWork.Governorate.Add(governorate);
+                    ReturnedGovernorate = await unitOfWork.Governorate.Add(new Governorate { Title = governorate.Title });
                     await unitOfWork.SaveChangesAsync();
-                }
+                }   
+                return ReturnedGovernorate;
             }
             catch (Exception ex)
             {
@@ -52,22 +50,12 @@ namespace Risk_Business_Layer.Repositories.Crud
             }
         }
 
-        public async Task<IEnumerable<Governorate>> GetByIdAsync(int? id)
+        public async Task<IEnumerable<Governorate>> GetGovernorate()
         {
             try
             {
-                if (id is not null)
-                {
-                    var governorates = await unitOfWork.Governorate.Find(c=>c.Id==id);
-
-                    return governorates;
-                }
-                else
-                {
-                    var governorates = await unitOfWork.Governorate.GetAll();
-
-                    return governorates;
-                }
+                var governorates = await unitOfWork.Governorate.GetAll();
+                return governorates;
             }
             catch (Exception ex)
             {

@@ -16,11 +16,12 @@ namespace Risk_Data_Access_Layer.Models
         [ForeignKey("CityId")]
         public City City { get; set; }
 
+        [Required]
         public int ClientTypeId { get; set; } 
 
         [ForeignKey("ClientTypeId")]
         public   ClientType ClientType { get; set; }
+
         public  ICollection<CallReason> CallReasons { get; set; }
     }
-
 }

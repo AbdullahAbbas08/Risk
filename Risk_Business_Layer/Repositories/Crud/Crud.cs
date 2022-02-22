@@ -24,9 +24,10 @@ namespace Risk_Business_Layer.Repositories.Crud
         #endregion
 
         #region Add
-        public virtual async Task Add(T Entity)
+        public virtual async Task<T> Add(T Entity)
         {
            await riskDbContext.AddAsync(Entity);
+           return Entity;
         }
         #endregion
 

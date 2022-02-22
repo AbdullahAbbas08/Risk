@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using Risk_Business_Layer.IRepositories.ICrud;
@@ -5,7 +6,10 @@ using Risk_Business_Layer.IUnitOfWork.ICrud;
 using Risk_Business_Layer.IUnitOfWork.IUnitOfWork_Crud;
 using Risk_Business_Layer.Repositories.Crud;
 using Risk_Business_Layer.Seeds;
+using Risk_Business_Layer.Services;
 using Risk_Business_Layer.UnitOfWork.UnitOfWork_Crud;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,14 +17,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-#region AddTransient
-builder.Services.AddTransient(typeof(ICrud<>), typeof(Crud<>));
-builder.Services.AddTransient<IUnitOfWork_Crud, UnitOfWork_Crud>();
-builder.Services.AddTransient<ICallReasonBusiness<CallReason>, CallReasonBusiness>();
-builder.Services.AddTransient<ICityBusiness<City>, CityBusiness>();
-builder.Services.AddTransient<IGovernorateBusiness<Governorate>, GovernorateBusiness>();
-builder.Services.AddTransient<ISourceMarketingBusiness<SourceMarketing>, SourceMarketingBusiness>();
-builder.Services.AddTransient<IClientTypeBusiness<ClientType>, ClientTypeBusiness>();
+#region Mapped Interfaces Implementations 
+    builder.Services.AddTransient(typeof(ICrud<>), typeof(Crud<>));
+    builder.Services.AddTransient<IUnitOfWork_Crud, UnitOfWork_Crud>();
+    builder.Services.AddTransient<ICallReasonBusiness<CallReason>, CallReasonBusiness>();
+    builder.Services.AddTransient<ICityBusiness<City>, CityBusiness>();
+    builder.Services.AddTransient<IGovernorateBusiness<Governorate>, GovernorateBusiness>();
+    builder.Services.AddTransient<ISourceMarketingBusiness<SourceMarketing>, SourceMarketingBusiness>();
+    builder.Services.AddTransient<IClientTypeBusiness<ClientType>, ClientTypeBusiness>();
+    builder.Services.AddScoped<IAuthService, AuthService>();
 #endregion
 
 #region Map Classes Into Appsettings
@@ -28,15 +33,11 @@ builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
 #endregion
 
 #region Apply Identity 
-builder.Services.AddIdentity<Employee,IdentityRole>().AddEntityFrameworkStores<RiskDbContext>();
+builder.Services.AddIdentity<ApplicationUser,IdentityRole>().AddEntityFrameworkStores<RiskDbContext>();
 #endregion
 
 #region Add Context
 builder.Services.AddDbContext<RiskDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-#endregion
-
-#region Mapped Classes 
-builder.Services.AddScoped<IAuthService, AuthService>();
 #endregion
 
 #region Swagger Configurations
@@ -82,6 +83,20 @@ builder.Services.AddSwaggerGen(options =>
 });
 #endregion
 
+#region Authentecation Service Configurations (JWT)
+    builder.Services.AddAuthentication(option=> {
+        option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddJwtBearer(x=>x.TokenValidationParameters = new TokenValidationParameters {
+        ValidateIssuerSigningKey = true,
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidIssuer = builder.Configuration["JWT:Issuer"],
+        ValidAudience = builder.Configuration["JWT:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+    });
+#endregion
 
 var app = builder.Build();
 
@@ -121,7 +136,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 #endregion
 
+#region To Use Identity
+app.UseAuthentication();
 app.UseAuthorization();
+#endregion
 
 app.MapControllers();
 

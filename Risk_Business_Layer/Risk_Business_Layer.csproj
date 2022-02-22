@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Risk_Data_Access_Layer\Risk_Data_Access_Layer.csproj" />
+    <ProjectReference Include="..\Risk_Domain_Layer\Risk_Domain_Layer.csproj" />
   </ItemGroup>
 
 </Project>

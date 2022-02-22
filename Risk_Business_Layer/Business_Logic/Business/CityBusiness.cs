@@ -13,15 +13,17 @@ namespace Risk_Business_Layer.Repositories.Crud
             this.unitOfWork = unitOfWork;
         }
 
-        public async Task AddAsync(City city)
+        public async Task<City> AddAsync(City city)
         {
             try
             {
+                City city1 = new City();
                 if (city is not null)
                 {
-                    await unitOfWork.City.Add(city);
+                    city1 =  await unitOfWork.City.Add(city);
                     await unitOfWork.SaveChangesAsync();
                 }
+                return city1;
             }
             catch (Exception ex)
             {
@@ -48,22 +50,11 @@ namespace Risk_Business_Layer.Repositories.Crud
             }
         }
 
-        public async Task<IEnumerable<City>> GetByIdAsync(int? id)
+        public async Task<IEnumerable<City>> GetCities()
         {
             try
             {
-                if (id is not null)
-                {
-                    var city = await unitOfWork.City.Find(c=>c.Id==id);
-
-                    return city;
-                }
-                else
-                {
-                    var cities = await unitOfWork.City.GetAll();
-
-                    return cities;
-                }
+                return await unitOfWork.City.GetAll();
             }
             catch (Exception ex)
             {

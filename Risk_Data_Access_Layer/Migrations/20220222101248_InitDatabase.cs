@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Risk_Data_Access_Layer.Migrations
 {
-    public partial class InitialDb : Migration
+    public partial class InitDatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -70,6 +70,43 @@ namespace Risk_Data_Access_Layer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "IdentityUser",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IdentityUser", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MobilePhones",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Mobile = table.Column<string>(type: "varchar(11)", maxLength: 11, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MobilePhones", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SourceOfMarketing",
                 schema: "dbo",
                 columns: table => new
@@ -90,7 +127,7 @@ namespace Risk_Data_Access_Layer.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(150)", nullable: false),
-                    Phone = table.Column<string>(type: "varchar(11)", maxLength: 11, nullable: false),
+                    Mobile = table.Column<string>(type: "varchar(11)", maxLength: 11, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(500)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -152,6 +189,42 @@ namespace Risk_Data_Access_Layer.Migrations
                         column: x => x.GovernorateId,
                         principalSchema: "dbo",
                         principalTable: "Governorates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Call",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Reason = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CallType = table.Column<byte>(type: "tinyint", nullable: false),
+                    SourceMarketId = table.Column<int>(type: "int", nullable: false),
+                    Satisfy = table.Column<bool>(type: "bit", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Start = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    End = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CallReasonId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Call", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Call_CallReasons_CallReasonId",
+                        column: x => x.CallReasonId,
+                        principalSchema: "dbo",
+                        principalTable: "CallReasons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Call_SourceOfMarketing_SourceMarketId",
+                        column: x => x.SourceMarketId,
+                        principalSchema: "dbo",
+                        principalTable: "SourceOfMarketing",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -294,6 +367,69 @@ namespace Risk_Data_Access_Layer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Customers",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CityId = table.Column<int>(type: "int", nullable: false),
+                    Gender = table.Column<byte>(type: "tinyint", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MobileId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Customers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Customers_Cities_CityId",
+                        column: x => x.CityId,
+                        principalSchema: "dbo",
+                        principalTable: "Cities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Customers_MobilePhones_MobileId",
+                        column: x => x.MobileId,
+                        principalSchema: "dbo",
+                        principalTable: "MobilePhones",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Customers_Users_Id",
+                        column: x => x.Id,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AgentClients",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AgentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ClientId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AgentClients", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AgentClients_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "dbo",
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AgentClients_Employees_AgentId",
+                        column: x => x.AgentId,
+                        principalSchema: "dbo",
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CallReasonClient",
                 schema: "dbo",
                 columns: table => new
@@ -320,12 +456,59 @@ namespace Risk_Data_Access_Layer.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ClientCalls",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CallId = table.Column<int>(type: "int", nullable: false),
+                    ClientId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    @string = table.Column<string>(name: "string", type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientCalls", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientCalls_Call_CallId",
+                        column: x => x.CallId,
+                        principalTable: "Call",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientCalls_Clients_string",
+                        column: x => x.@string,
+                        principalSchema: "dbo",
+                        principalTable: "Clients",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AgentClients_AgentId",
+                table: "AgentClients",
+                column: "AgentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AgentClients_ClientId",
+                table: "AgentClients",
+                column: "ClientId");
+
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
                 column: "NormalizedName",
                 unique: true,
                 filter: "[NormalizedName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Call_CallReasonId",
+                table: "Call",
+                column: "CallReasonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Call_SourceMarketId",
+                table: "Call",
+                column: "SourceMarketId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CallReasonClient_ClientsId",
@@ -340,6 +523,16 @@ namespace Risk_Data_Access_Layer.Migrations
                 column: "GovernorateId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ClientCalls_CallId",
+                table: "ClientCalls",
+                column: "CallId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientCalls_string",
+                table: "ClientCalls",
+                column: "string");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Clients_CityId",
                 schema: "dbo",
                 table: "Clients",
@@ -350,6 +543,18 @@ namespace Risk_Data_Access_Layer.Migrations
                 schema: "dbo",
                 table: "Clients",
                 column: "ClientTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Customers_CityId",
+                schema: "dbo",
+                table: "Customers",
+                column: "CityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Customers_MobileId",
+                schema: "dbo",
+                table: "Customers",
+                column: "MobileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
@@ -387,19 +592,24 @@ namespace Risk_Data_Access_Layer.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AgentClients");
+
+            migrationBuilder.DropTable(
                 name: "CallReasonClient",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "Employees",
+                name: "ClientCalls");
+
+            migrationBuilder.DropTable(
+                name: "Customers",
                 schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "IdentityUser");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");
-
-            migrationBuilder.DropTable(
-                name: "SourceOfMarketing",
-                schema: "dbo");
 
             migrationBuilder.DropTable(
                 name: "UserClaims");
@@ -414,15 +624,30 @@ namespace Risk_Data_Access_Layer.Migrations
                 name: "UserTokens");
 
             migrationBuilder.DropTable(
-                name: "CallReasons",
+                name: "Employees",
                 schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "Call");
 
             migrationBuilder.DropTable(
                 name: "Clients",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
+                name: "MobilePhones",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "CallReasons",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "SourceOfMarketing",
+                schema: "dbo");
 
             migrationBuilder.DropTable(
                 name: "Cities",

@@ -50,7 +50,7 @@ namespace Risk.Controllers
         // PUT: api/SourceMarketing/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSourceMarketing(int id, SourceMarketing SourceMarketing)
-        {
+        { 
             try
             {
                 await sourceMarketingBusiness.UpdateAsync(id, SourceMarketing);

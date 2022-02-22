@@ -13,7 +13,7 @@ namespace Risk_Business_Layer.IUnitOfWork.ICrud
         Task<IEnumerable<T>> Get(Expression<Func<T, bool>> match);
         Task<T> Find(int ID);
         Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate);
-        Task Add(T Entity);
+        Task<T> Add(T Entity);
         T Update(T Entity);
         Task<bool> Delete(int ID);
     }

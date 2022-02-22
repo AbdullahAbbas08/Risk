@@ -89,6 +89,52 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.ToTable("RoleClaims", (string)null);
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IdentityUser");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -281,6 +327,9 @@ namespace Risk_Data_Access_Layer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int>("CallReasonId")
+                        .HasColumnType("int");
+
                     b.Property<byte>("CallType")
                         .HasColumnType("tinyint");
 
@@ -312,6 +361,8 @@ namespace Risk_Data_Access_Layer.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CallReasonId");
 
                     b.HasIndex("SourceMarketId");
 
@@ -347,9 +398,6 @@ namespace Risk_Data_Access_Layer.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("GovernorateId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Order")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -605,11 +653,19 @@ namespace Risk_Data_Access_Layer.Migrations
 
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.Call", b =>
                 {
+                    b.HasOne("Risk_Data_Access_Layer.Models.CallReason", "CallReason")
+                        .WithMany()
+                        .HasForeignKey("CallReasonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Risk_Data_Access_Layer.Models.SourceMarketing", "SourceMarketing")
                         .WithMany()
                         .HasForeignKey("SourceMarketId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CallReason");
 
                     b.Navigation("SourceMarketing");
                 });

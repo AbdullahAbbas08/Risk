@@ -1,4 +1,5 @@
 ﻿using Risk_Business_Layer.IRepositories.ICrud;
+using Risk_Domain_Layer.DTO_S.City;
 
 namespace Risk.Controllers
 {
@@ -19,22 +20,30 @@ namespace Risk.Controllers
         /// <param name="id">ID for City</param>
         /// <returns></returns>
         // GET: api/City/5
-        [HttpGet()]
-        public async Task<ActionResult<IEnumerable<City>>> GetCity(int? id = null)
+        [HttpGet]
+        public async Task<ActionResult<GeneralResponse<City>>> GetCity()
         {
             try
             {
-                var cities = await cityBusiness.GetByIdAsync(id);
+                #region Generate Returned Object TypeOf GeneralResponse
+                GeneralResponse<City> GeneralResponse = new GeneralResponse<City>();
+                #endregion
 
-                if (cities == null)
-                {
-                    return NoContent();
-                }
+                #region Call Service
+                var cities = await cityBusiness.GetCities();
+                GeneralResponse.Data = cities.ToList();
+                #endregion
 
-                return Ok(cities);
+                #region return 
+                GeneralResponse.Message = "Successffully";
+                return Ok(GeneralResponse);
+                #endregion
 
             }
-            catch (Exception ex) { return BadRequest(ex.InnerException); }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
 
         }
 
@@ -50,7 +59,7 @@ namespace Risk.Controllers
         public async Task<IActionResult> PutCity(int id, City city)
         {
             try
-            {
+            { 
                 await cityBusiness.UpdateAsync(id, city);
 
                 return Ok("Updated Successfully");
@@ -67,16 +76,28 @@ namespace Risk.Controllers
         /// <returns></returns>
         // POST: api/City
         [HttpPost]
-        public async Task<ActionResult<City>> PostCity(City city)
+        public async Task<ActionResult<GeneralResponseSingleObject<City>>> PostCity(AddCityDto city)
         {
             try
             {
-                await cityBusiness.AddAsync(city);
+                #region Generate Returned Object TypeOf GeneralResponse
+                GeneralResponseSingleObject<City> GeneralResponse = new GeneralResponseSingleObject<City>();
+                #endregion
 
-                return Ok(city);
+                #region Call Service
+                GeneralResponse.Data =  await cityBusiness.AddAsync(new City { Title = city.CityName, GovernorateId = city.GovernorateID });
+                #endregion
+
+                #region return 
+                GeneralResponse.Message = "City Added Successffully";
+                return Ok(GeneralResponse);
+                #endregion
             }
 
-            catch (Exception ex) { return BadRequest(ex.InnerException); }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
 
         }
 

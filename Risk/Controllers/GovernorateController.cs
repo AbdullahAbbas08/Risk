@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Risk_Business_Layer.IRepositories.ICrud;
+﻿using Risk_Business_Layer.IRepositories.ICrud;
+using Risk_Domain_Layer.DTO_S.Governorate;
 
 namespace Risk.Controllers
 {
@@ -21,22 +20,30 @@ namespace Risk.Controllers
         /// <param name="id">ID for governorate</param>
         /// <returns></returns>
         // GET: api/Governorate/5
-        [HttpGet()]
-        public async Task<ActionResult<IEnumerable<Governorate>>> GetGovernorate(int? id = null)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Governorate>>> GetGovernorate()
         {
             try
             {
-                var governorates = await governorateBusiness.GetByIdAsync(id);
+                #region Generate Returned Object TypeOf GeneralResponse
+                GeneralResponse<Governorate> GeneralResponse = new GeneralResponse<Governorate>();
+                #endregion
 
-                if (governorates == null)
-                {
-                    return NoContent();
-                }
+                #region Call Service
+                var Governorates = await governorateBusiness.GetGovernorate();
+                GeneralResponse.Data = Governorates.ToList();
+                #endregion
 
-                return Ok(governorates);
+                #region return 
+                GeneralResponse.Message = "Successffully";
+                return Ok(GeneralResponse);
+                #endregion
 
             }
-            catch (Exception ex) { return BadRequest(ex.InnerException); }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
 
         }
 
@@ -69,15 +76,31 @@ namespace Risk.Controllers
         /// <returns></returns>
         // POST: api/Governorate
         [HttpPost]
-        public async Task<ActionResult<City>> PostGovernorate(Governorate governorate)
+        public async Task<ActionResult<GeneralResponseSingleObject<Governorate>>> PostGovernorate(AddGovernorateDto Governorate)
         {
             try
             {
-                await governorateBusiness.AddAsync(governorate);
+                try
+                {
+                    #region Generate Returned Object TypeOf GeneralResponse
+                    GeneralResponseSingleObject<Governorate> GeneralResponse = new GeneralResponseSingleObject<Governorate>();
+                    #endregion
 
-                return Ok(governorate);
+                    #region Call Service
+                    GeneralResponse.Data =  await governorateBusiness.AddAsync(Governorate); 
+                    #endregion
+
+                    #region return 
+                    GeneralResponse.Message = "governorate Added Successffully";
+                    return Ok(GeneralResponse);
+                    #endregion
+
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                }
             }
-
             catch (Exception ex) { return BadRequest(ex.InnerException); }
 
         }

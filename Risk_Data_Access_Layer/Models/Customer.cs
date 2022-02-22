@@ -18,6 +18,5 @@
 
         [ForeignKey("MobileId")] 
         public virtual MobilePhone MobilePhone  { get; set; }
-
     }
 }

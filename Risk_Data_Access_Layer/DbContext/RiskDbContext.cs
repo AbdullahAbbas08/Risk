@@ -35,8 +35,9 @@
             //builder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
 
             //Remove Column Exist In Identity
-            //builder.Entity<IdentityUser>()
-            //    .Ignore(e => e.Email);
+            builder.Entity<IdentityUser>()
+                .Ignore(e => e.Email)
+                .Ignore(e => e.EmailConfirmed);
 
             //Change Table Name && Remove Column Exist In Identity
             //builder.Entity<IdentityUser>()
