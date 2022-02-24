@@ -1,12 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Risk_Business_Layer.IUnitOfWork.ICrud;
+using Risk_Business_Layer.IRepositories.ICrud;
 using Risk_Data_Access_Layer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Risk_Business_Layer.Repositories.Crud
 {
@@ -80,7 +76,8 @@ namespace Risk_Business_Layer.Repositories.Crud
         #region Update
         public virtual T Update(T Entity)
         {
-            return riskDbContext.Update(Entity).Entity;
+            var UpdatedEntity = riskDbContext.Update(Entity).Entity;
+            return UpdatedEntity;
         }
         #endregion
 

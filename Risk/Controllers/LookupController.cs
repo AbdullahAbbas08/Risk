@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Risk_Business_Layer.IRepositories.ICrud;
-
-namespace Risk.Controllers
+﻿namespace Risk.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -28,7 +24,7 @@ namespace Risk.Controllers
         {
             try
             {
-                var ClientTypes = await clientTypeBusiness.GetByIdAsync(null);
+                var ClientTypes = await clientTypeBusiness.GetAll();
 
                 if (ClientTypes == null)
                 {

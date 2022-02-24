@@ -10,12 +10,10 @@
 
         public string ClientId { get; set; }
 
-        [Required]
-        [ForeignKey("AgentId")]
+        [Required, ForeignKey("AgentId"),JsonIgnore]
         public Employee Employees { get; set; }
 
-        [Required]
-        [ForeignKey("ClientId")]
+        [Required, ForeignKey("ClientId"), JsonIgnore]
         public Client Clients { get; set; }
     } 
 

@@ -1,4 +1,4 @@
-﻿using Risk_Business_Layer.IUnitOfWork.ICrud;
+﻿using Risk_Business_Layer.IRepositories.ICrud; 
 
 namespace Risk_Business_Layer.IUnitOfWork.IUnitOfWork_Crud
 {
@@ -9,8 +9,9 @@ namespace Risk_Business_Layer.IUnitOfWork.IUnitOfWork_Crud
         ICrud<Governorate> Governorate { get; }
         ICrud<ClientType> ClientType { get; }
         ICrud<Client> Client { get;  }
+        ICrud<AgentClient> AgentClient { get;  }
         ICrud<Employee> Employee { get;  }
         ICrud<SourceMarketing> SourceMarketing  { get; }
         Task SaveChangesAsync();
-    }
+    } 
 }

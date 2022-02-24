@@ -12,12 +12,16 @@ namespace Risk_Business_Layer.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IUnitOfWork_Crud unitOfWork;
         private readonly JWT _jwt;
         public AuthService(UserManager<ApplicationUser> userManager,
-                            RoleManager<IdentityRole> roleManager, IOptions<JWT> jwt)
+                            RoleManager<IdentityRole> roleManager,
+                            IOptions<JWT> jwt,
+                            IUnitOfWork_Crud unitOfWork)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            this.unitOfWork = unitOfWork;
             _jwt = jwt.Value;
         }
 
@@ -39,7 +43,19 @@ namespace Risk_Business_Layer.Services
             if ((model.Mobile).Length < 11)
                 ValidateModel += " , Mobile Number Invalid " ;
 
-            if(string.IsNullOrEmpty(ValidateModel))
+            var city = await unitOfWork.City.Find(x => x.Id == model.CityId);
+            if (city.Count() == 0)
+            {
+                ValidateModel += " , City ID Invalid ";
+            }
+
+            var clienttype = await unitOfWork.ClientType.Find(x => x.TypeId == model.ClientTypeId);
+            if (clienttype.Count() == 0)
+            {
+                ValidateModel += " , Client Type Id Invalid ";
+            }
+
+            if (!string.IsNullOrEmpty(ValidateModel))
                 return new AuthModel { Message = ValidateModel };
             #endregion
 
@@ -66,7 +82,7 @@ namespace Risk_Business_Layer.Services
                 foreach (var error in result.Errors)
                     errors += $"{error.Description},";
 
-                return new AuthModel { Message = errors };
+                return new AuthModel { Message = errors  };
             }
             #endregion
 

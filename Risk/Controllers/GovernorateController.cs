@@ -1,5 +1,4 @@
-﻿using Risk_Business_Layer.IRepositories.ICrud;
-using Risk_Domain_Layer.DTO_S.Governorate;
+﻿using Risk_Domain_Layer.DTO_S.Governorate;
 
 namespace Risk.Controllers
 {
@@ -18,8 +17,9 @@ namespace Risk.Controllers
         /// Api for get all Governorates without parameter or a specific one if his id is entered
         /// </summary>
         /// <param name="id">ID for governorate</param>
-        /// <returns></returns>
-        // GET: api/Governorate/5
+        /// <returns>
+        /// List of Object type of Class => Governorate
+        /// </returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Governorate>>> GetGovernorate()
         {
@@ -55,17 +55,25 @@ namespace Risk.Controllers
         /// <param name="city">Model for update</param>
         /// <returns></returns>
         // PUT: api/Governorate/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutGovernorate(int id, Governorate governorate)
+        [HttpPut]
+        public async Task<IActionResult> PutGovernorate(int id, AddGovernorateDto governorate)
         {
-            try
-            {
-                await governorateBusiness.UpdateAsync(id, governorate);
 
-                return Ok("Updated Successfully");
-            }
+            #region Generate Returned Object TypeOf GeneralResponse
+            GeneralResponseSingleObject<Governorate> GeneralResponse = new GeneralResponseSingleObject<Governorate>();
+            #endregion
 
-            catch (Exception ex) { return BadRequest(ex.InnerException); }
+            #region Call Service
+            GeneralResponse.Data = await governorateBusiness.UpdateAsync(id, new AddGovernorateDto { Title = governorate.Title });
+            #endregion
+
+            #region return 
+            if (GeneralResponse.Data == null)
+                GeneralResponse.Message = "Something wrong , try again";
+            else
+                GeneralResponse.Message = "governorate Updated Successffully";
+            return Ok(GeneralResponse);
+            #endregion
 
         }
 
@@ -80,29 +88,24 @@ namespace Risk.Controllers
         {
             try
             {
-                try
-                {
-                    #region Generate Returned Object TypeOf GeneralResponse
-                    GeneralResponseSingleObject<Governorate> GeneralResponse = new GeneralResponseSingleObject<Governorate>();
-                    #endregion
+                #region Generate Returned Object TypeOf GeneralResponse
+                GeneralResponseSingleObject<Governorate> GeneralResponse = new GeneralResponseSingleObject<Governorate>();
+                #endregion
 
-                    #region Call Service
-                    GeneralResponse.Data =  await governorateBusiness.AddAsync(Governorate); 
-                    #endregion
+                #region Call Service
+                GeneralResponse.Data = await governorateBusiness.AddAsync(Governorate);
+                #endregion
 
-                    #region return 
-                    GeneralResponse.Message = "governorate Added Successffully";
-                    return Ok(GeneralResponse);
-                    #endregion
+                #region return 
+                GeneralResponse.Message = "governorate Added Successffully";
+                return Ok(GeneralResponse);
+                #endregion
 
-                }
-                catch (Exception ex)
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-                }
             }
-            catch (Exception ex) { return BadRequest(ex.InnerException); }
-
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         /// <summary>
@@ -121,7 +124,10 @@ namespace Risk.Controllers
                 return Ok();
             }
 
-            catch (Exception ex) { return BadRequest(ex.InnerException); }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
 
         }
     }

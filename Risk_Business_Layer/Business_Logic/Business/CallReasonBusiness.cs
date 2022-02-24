@@ -1,7 +1,6 @@
-﻿using Risk_Business_Layer.IRepositories.ICrud;
-using Risk_Business_Layer.IUnitOfWork.IUnitOfWork_Crud;
+﻿using Risk_Business_Layer.IBusiness_Logic.Interfaces;
 
-namespace Risk_Business_Layer.Repositories.Crud
+namespace Risk_Business_Layer.Business_Logic.Business
 {
     public class CallReasonBusiness : ICallReasonBusiness<CallReason>
     {

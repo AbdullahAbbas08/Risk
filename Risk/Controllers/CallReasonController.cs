@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Risk_Business_Layer.Constants;
-using Risk_Business_Layer.IRepositories.ICrud;
-using Risk_Data_Access_Layer.Constants;
-
-namespace Risk.Controllers
+﻿namespace Risk.Controllers
 {
     
     [Route("api/[controller]")]

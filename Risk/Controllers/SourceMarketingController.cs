@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Risk_Business_Layer.IRepositories.ICrud;
 
 namespace Risk.Controllers
 {

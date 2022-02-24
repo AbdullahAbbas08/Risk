@@ -1,4 +1,5 @@
-﻿using Risk_Business_Layer.IRepositories.ICrud;
+﻿using Microsoft.AspNetCore.Mvc;
+using Risk_Business_Layer.IBusiness_Logic.Interfaces;
 using Risk_Business_Layer.IUnitOfWork.IUnitOfWork_Crud;
 
 
@@ -62,15 +63,31 @@ namespace Risk_Business_Layer.Repositories.Crud
             }
         }
 
-        public async Task UpdateAsync(int id, City city)
+        public async Task<GeneralResponseSingleObject<City>> UpdateAsync(int id, City model)
         {
             try
             {
-                if (id != 0 && city.Id == id)
+                GeneralResponseSingleObject<City> response = new GeneralResponseSingleObject<City>();
+                var governorate =await unitOfWork.Governorate.Find(model.GovernorateId);
+                if (governorate == null)
+                    response.Message = "كود المحافظة غير موجود أو غير صحيح";
+                else
                 {
-                    unitOfWork.City.Update(city);
-                    await unitOfWork.SaveChangesAsync();
+                    var city = await unitOfWork.City.Find(id);
+                    if (city != null)
+                    {
+                        model.Id = id;
+                        city.Title = model.Title;
+                        city.GovernorateId = model.GovernorateId;
+                        response.Data = city;
+                        await unitOfWork.SaveChangesAsync();
+                        response.Message = "تمت عملية التعديل بنجاح";
+                    }
+                    else
+                        response.Message = "كود المدينة غير موجود أو غير صحيح";
                 }
+                return response;
+
             }
             catch (Exception ex)
             {

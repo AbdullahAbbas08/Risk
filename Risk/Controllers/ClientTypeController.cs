@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Risk_Business_Layer.IRepositories.ICrud;
+﻿using Risk_Domain_Layer.DTO_S.ClientType;
 
 namespace Risk.Controllers
 {
@@ -16,27 +14,44 @@ namespace Risk.Controllers
         }
 
         /// <summary>
-        /// Api for get all ClientTypes without parameter or a specific one if his id is entered
+        /// Insert New ClientType
         /// </summary>
-        /// <param name="id">ID for ClientType</param>
-        /// <returns></returns>
-        // GET: api/ClientType/5
-        [HttpGet()]
-        public async Task<ActionResult<IEnumerable<ClientType>>> GetClientType(int? id = null)
+        /// <param name="clientType">Model for add ClientType</param>
+        /// <returns>
+        /// Object TypeOf => ClientType that Inserted Successfully
+        /// </returns>
+        [HttpPost]
+        public async Task<ActionResult<GeneralResponseSingleObject<ClientType>>> PostClientType(AddClientTypeDto clientType)
         {
             try
             {
-                var ClientTypes = await clientTypeBusiness.GetByIdAsync(id);
-
-                if (ClientTypes == null)
-                {
-                    return NoContent();
-                }
-
-                return Ok(ClientTypes);
-
+                return await clientTypeBusiness.AddAsync(clientType);
             }
-            catch (Exception ex) { return BadRequest(ex.InnerException); }
+
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException);
+            }
+
+        }
+
+        /// <summary>
+        /// Api for get all ClientTypes without parameter 
+        /// </summary>
+        /// <returns></returns>
+        // GET: api/ClientType/5
+        [HttpGet]
+        public async Task<ActionResult<GeneralResponse<ClientType>>> GetClientType()
+        {
+            try
+            {
+               return await clientTypeBusiness.GetAll();
+               
+            }
+            catch (Exception ex) 
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,ex.InnerException); 
+            }
 
         }
 
@@ -47,59 +62,39 @@ namespace Risk.Controllers
         /// <param name="id">ID for ClientType</param>
         /// <param name="clientType">Model for update</param>
         /// <returns></returns>
-        // PUT: api/ClientType/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutClientType(int id, ClientType clientType)
+        [HttpPut("id")]
+        public async Task<ActionResult<GeneralResponseSingleObject<ClientType>>> PutClientType(int id, AddClientTypeDto model)
         {
             try
             {
-                await clientTypeBusiness.UpdateAsync(id, clientType);
-
-                return Ok("Updated Successfully");
+               return await clientTypeBusiness.UpdateAsync(id, new ClientType { Title = model.Title});
             }
 
-            catch (Exception ex) { return BadRequest(ex.InnerException); }
-
-        }
-
-        /// <summary>
-        /// API For Adding A New ClientType
-        /// </summary>
-        /// <param name="clientType">Model for add ClientType</param>
-        /// <returns></returns>
-        // POST: api/ClientType
-        [HttpPost]
-        public async Task<ActionResult<ClientType>> PostClientType(ClientType clientType)
-        {
-            try
+            catch (Exception ex)
             {
-                await clientTypeBusiness.AddAsync(clientType);
-
-                return Ok(clientType);
+                return StatusCode(StatusCodes.Status500InternalServerError,ex.InnerException);
             }
-
-            catch (Exception ex) { return BadRequest(ex.InnerException); }
-
         }
+
+       
 
         /// <summary>
         /// API For Delete An Existing ClientType
         /// </summary>
         /// <param name="id">ID for ClientType</param>
         /// <returns></returns>
-        // DELETE: api/ClientType/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCity(int id)
+        [HttpDelete("id")] 
+        public async Task<ActionResult<GeneralResponseSingleObject<ClientType>>> DeleteCity(int id)
         {
             try
             {
-                await clientTypeBusiness.DeleteAsync(id);
-
-                return Ok();
+              return  await clientTypeBusiness.DeleteAsync(id);
             }
 
-            catch (Exception ex) { return BadRequest(ex.InnerException); }
-
+            catch (Exception ex) 
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,ex.InnerException);
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Risk_Business_Layer.IUnitOfWork.ICrud
+namespace Risk_Business_Layer.IRepositories.ICrud
 {
     public interface ICrud<T> where T : class
     {
@@ -18,3 +18,4 @@ namespace Risk_Business_Layer.IUnitOfWork.ICrud
         Task<bool> Delete(int ID);
     }
 }
+ 

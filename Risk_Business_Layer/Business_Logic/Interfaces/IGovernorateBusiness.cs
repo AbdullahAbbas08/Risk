@@ -1,6 +1,6 @@
 ﻿using Risk_Domain_Layer.DTO_S.Governorate;
 
-namespace Risk_Business_Layer.IRepositories.ICrud
+namespace Risk_Business_Layer.IBusiness_Logic.Interfaces
 {
     public interface IGovernorateBusiness<T> where T : class
     {
@@ -8,6 +8,6 @@ namespace Risk_Business_Layer.IRepositories.ICrud
         //Task<IEnumerable<T>> Search(string name);
         Task<T> AddAsync(AddGovernorateDto governorate);
         Task DeleteAsync(int id);
-        Task UpdateAsync(int id, Governorate governorate);
+        Task<T> UpdateAsync(int id, AddGovernorateDto governorate);
     }
 }

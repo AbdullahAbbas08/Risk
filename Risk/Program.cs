@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using Risk_Business_Layer.IRepositories.ICrud;
-using Risk_Business_Layer.IUnitOfWork.ICrud;
+using Risk_Business_Layer.Business_Logic.Business;
 using Risk_Business_Layer.IUnitOfWork.IUnitOfWork_Crud;
 using Risk_Business_Layer.Repositories.Crud;
 using Risk_Business_Layer.Seeds;
@@ -18,14 +18,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 #region Mapped Interfaces Implementations 
-    builder.Services.AddTransient(typeof(ICrud<>), typeof(Crud<>));
-    builder.Services.AddTransient<IUnitOfWork_Crud, UnitOfWork_Crud>();
-    builder.Services.AddTransient<ICallReasonBusiness<CallReason>, CallReasonBusiness>();
-    builder.Services.AddTransient<ICityBusiness<City>, CityBusiness>();
-    builder.Services.AddTransient<IGovernorateBusiness<Governorate>, GovernorateBusiness>();
-    builder.Services.AddTransient<ISourceMarketingBusiness<SourceMarketing>, SourceMarketingBusiness>();
-    builder.Services.AddTransient<IClientTypeBusiness<ClientType>, ClientTypeBusiness>();
-    builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddTransient(typeof(ICrud<>), typeof(Crud<>));
+builder.Services.AddTransient<IUnitOfWork_Crud, UnitOfWork_Crud>();
+builder.Services.AddTransient<ICallReasonBusiness<CallReason>, CallReasonBusiness>();
+builder.Services.AddTransient<IAgentClientBusiness, AgentClientBusiness>();
+builder.Services.AddTransient<ICityBusiness<City>, CityBusiness>();
+builder.Services.AddTransient<IGovernorateBusiness<Governorate>, GovernorateBusiness>();
+builder.Services.AddTransient<ISourceMarketingBusiness<SourceMarketing>, SourceMarketingBusiness>();
+builder.Services.AddTransient<IClientTypeBusiness<ClientType>, ClientTypeBusiness>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 #endregion
 
 #region Map Classes Into Appsettings
@@ -33,7 +34,7 @@ builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
 #endregion
 
 #region Apply Identity 
-builder.Services.AddIdentity<ApplicationUser,IdentityRole>().AddEntityFrameworkStores<RiskDbContext>();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<RiskDbContext>();
 #endregion
 
 #region Add Context
@@ -45,16 +46,16 @@ builder.Services.AddDbContext<RiskDbContext>(options => options.UseSqlServer(bui
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-            //Swagger Header
-            options.SwaggerDoc("v1", new OpenApiInfo
+    //Swagger Header
+    options.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
         Title = "Risk API",
         Description = "Description Not Added Yet "
     });
 
-            //Swagger Definition For All 
-            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    //Swagger Definition For All 
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
         Type = SecuritySchemeType.ApiKey,
@@ -64,38 +65,40 @@ builder.Services.AddSwaggerGen(options =>
         Description = "JWT Authorization header using the Bearer scheme. \r\n\r\nExample: \"Bearer 12345abcdef\""
     });
 
-            //Swagger Definition For One Controller
-            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    //Swagger Definition For One Controller
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                        },
-                        Name = "Bearer",
-                         In = ParameterLocation.Header,
-                    },
-                    new List<string>()
-                }
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference {
+                Type = ReferenceType.SecurityScheme,
+                Id = "Bearer"
+                },
+                Name = "Bearer",
+                    In = ParameterLocation.Header,
+            },
+            new List<string>()
+        }
     });
 });
 #endregion
 
 #region Authentecation Service Configurations (JWT)
-    builder.Services.AddAuthentication(option=> {
-        option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    }).AddJwtBearer(x=>x.TokenValidationParameters = new TokenValidationParameters {
-        ValidateIssuerSigningKey = true,
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidIssuer = builder.Configuration["JWT:Issuer"],
-        ValidAudience = builder.Configuration["JWT:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
-    });
+builder.Services.AddAuthentication(option =>
+{
+    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x => x.TokenValidationParameters = new TokenValidationParameters
+{
+    ValidateIssuerSigningKey = true,
+    ValidateIssuer = true,
+    ValidateAudience = true,
+    ValidateLifetime = true,
+    ValidIssuer = builder.Configuration["JWT:Issuer"],
+    ValidAudience = builder.Configuration["JWT:Audience"],
+    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+});
 #endregion
 
 var app = builder.Build();

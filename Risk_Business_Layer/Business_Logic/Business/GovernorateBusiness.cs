@@ -1,5 +1,4 @@
-﻿using Risk_Business_Layer.IRepositories.ICrud;
-using Risk_Business_Layer.IUnitOfWork.IUnitOfWork_Crud;
+﻿using Risk_Business_Layer.IBusiness_Logic.Interfaces;
 using Risk_Domain_Layer.DTO_S.Governorate;
 
 namespace Risk_Business_Layer.Repositories.Crud
@@ -63,15 +62,17 @@ namespace Risk_Business_Layer.Repositories.Crud
             }
         }
 
-        public async Task UpdateAsync(int id, Governorate governorate)
+        public async Task<Governorate> UpdateAsync(int id, AddGovernorateDto governorate)
         {
             try
             {
-                if (id != 0 && governorate.Id == id)
+                var UpdatedObject = await unitOfWork.Governorate.Find(id);
+                if (UpdatedObject != null)
                 {
-                    unitOfWork.Governorate.Update(governorate);
+                    UpdatedObject.Title = governorate.Title;
                     await unitOfWork.SaveChangesAsync();
                 }
+                return UpdatedObject;
             }
             catch (Exception ex)
             {

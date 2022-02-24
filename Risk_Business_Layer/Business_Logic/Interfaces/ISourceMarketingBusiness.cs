@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Risk_Business_Layer.IRepositories.ICrud
+﻿namespace Risk_Business_Layer.IBusiness_Logic.Interfaces
 {
     public interface ISourceMarketingBusiness<T> where T : class
     {

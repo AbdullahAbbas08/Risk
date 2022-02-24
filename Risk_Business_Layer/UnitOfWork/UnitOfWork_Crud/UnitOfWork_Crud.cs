@@ -1,5 +1,4 @@
-﻿using Risk_Business_Layer.IUnitOfWork.ICrud;
-using Risk_Business_Layer.IUnitOfWork.IUnitOfWork_Crud;
+﻿using Risk_Business_Layer.IRepositories.ICrud;
 using Risk_Business_Layer.Repositories.Crud;
 using Risk_Data_Access_Layer;
 
@@ -29,6 +28,8 @@ namespace Risk_Business_Layer.UnitOfWork.UnitOfWork_Crud
         private ICrud<Client> _Client;
         public ICrud<Client> Client { get { if (_Client == null) { _Client = new Crud<Client>(riskDbContext); }return _Client; } }
 
+        private ICrud<AgentClient> _AgentClient; 
+        public ICrud<AgentClient> AgentClient { get { if (_AgentClient == null) { _AgentClient = new Crud<AgentClient>(riskDbContext); } return _AgentClient; } }
 
         private ICrud<Employee> _Employee; 
         public ICrud<Employee> Employee { get { if (_Employee == null) { _Employee = new Crud<Employee>(riskDbContext); } return _Employee; } }

@@ -1,5 +1,4 @@
-﻿using Risk_Business_Layer.IRepositories.ICrud;
-using Risk_Domain_Layer.DTO_S.City;
+﻿using Risk_Domain_Layer.DTO_S.City;
 
 namespace Risk.Controllers
 {
@@ -54,19 +53,17 @@ namespace Risk.Controllers
         /// <param name="id">ID for CallReason</param>
         /// <param name="city">Model for update</param>
         /// <returns></returns>
-        // PUT: api/City/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCity(int id, City city)
+        [HttpPut("id")]
+        public async Task<ActionResult<GeneralResponseSingleObject<City>>> PutCity(int id, AddCityDto model)
         {
             try
-            { 
-                await cityBusiness.UpdateAsync(id, city);
-
-                return Ok("Updated Successfully");
+            {
+                return await cityBusiness.UpdateAsync(id, new City {Title = model.CityName , GovernorateId = model.GovernorateID } );
             }
-
-            catch (Exception ex) { return BadRequest(ex.InnerException); }
-
+            catch (Exception ex) 
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,ex.InnerException);
+            }
         }
 
         /// <summary>
@@ -107,7 +104,7 @@ namespace Risk.Controllers
         /// <param name="id">ID for City</param>
         /// <returns></returns>
         // DELETE: api/City/5
-        [HttpDelete("{id}")]
+        [HttpDelete("id")]
         public async Task<IActionResult> DeleteCity(int id)
         {
             try

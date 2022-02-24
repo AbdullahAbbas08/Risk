@@ -1,10 +1,5 @@
-﻿using Risk_Business_Layer.IRepositories.ICrud;
-using Risk_Business_Layer.IUnitOfWork.IUnitOfWork_Crud;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Risk_Business_Layer.IBusiness_Logic.Interfaces;
+using Risk_Domain_Layer.DTO_S.ClientType;
 
 namespace Risk_Business_Layer.Repositories.Crud
 {
@@ -17,15 +12,26 @@ namespace Risk_Business_Layer.Repositories.Crud
             this.unitOfWork = unitOfWork;
         }
 
-        public async Task AddAsync(ClientType clientType)
+        public async Task<GeneralResponseSingleObject<ClientType>> AddAsync(AddClientTypeDto model) 
         {
             try
             {
-                if (clientType is not null)
+                GeneralResponseSingleObject<ClientType> response = new GeneralResponseSingleObject<ClientType>();
+                if (string.IsNullOrEmpty(model.Title))
                 {
-                    await unitOfWork.ClientType.Add(clientType);
-                    await unitOfWork.SaveChangesAsync();
+                    var res = await unitOfWork.ClientType.Find(x => x.Title == model.Title);
+                    if (res != null)
+                    {
+                        response.Data = await unitOfWork.ClientType.Add(new ClientType { Title = model.Title });
+                        await unitOfWork.SaveChangesAsync();
+                        response.Message = "Client Type Added Successffully";
+                    }
+                    else
+                        response.Message = "Client Type Already Exist";
                 }
+                else
+                    response.Message = "You Must Enter Client Type Tite";
+                return response;
             }
             catch (Exception ex)
             {
@@ -33,41 +39,39 @@ namespace Risk_Business_Layer.Repositories.Crud
             }
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<GeneralResponseSingleObject<ClientType>> DeleteAsync(int id)
         {
             try
             {
+                GeneralResponseSingleObject<ClientType> response = new GeneralResponseSingleObject<ClientType>();
                 var clientType = await unitOfWork.ClientType.Find(id);
 
                 if (clientType != null)
                 {
                     await unitOfWork.ClientType.Delete(id);
                     await unitOfWork.SaveChangesAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-
-                throw ex.InnerException;
-            }
-        }
-
-        public async Task<IEnumerable<ClientType>> GetByIdAsync(int? id)
-        {
-            try
-            {
-                if (id is not null)
-                {
-                    var ClientType = await unitOfWork.ClientType.Find(c=>c.TypeId==id);
-
-                    return ClientType;
+                    response.Message = "تمت عملية الحذف بنجاح";
                 }
                 else
-                {
-                    var ClientTypes = await unitOfWork.ClientType.GetAll();
+                    response.Message = "الكود غير موجود أو غير صحيح";
+                return response;
+            }
+            catch (Exception ex)
+            {
 
-                    return ClientTypes;
-                }
+                throw ex.InnerException;
+            }
+        }
+
+        public async Task<GeneralResponse<ClientType>> GetAll()
+        {
+            try 
+            {
+                GeneralResponse<ClientType> response = new GeneralResponse<ClientType>();
+
+                response.Data =  (await unitOfWork.ClientType.GetAll()).ToList();
+                response.Message = "Successffully";
+                return response;
             }
             catch (Exception ex)
             {
@@ -75,15 +79,26 @@ namespace Risk_Business_Layer.Repositories.Crud
             }
         }
 
-        public async Task UpdateAsync(int id, ClientType clientType)
+        public async Task<GeneralResponseSingleObject<ClientType>> UpdateAsync(int id, ClientType model)
         {
             try
             {
-                if (id != 0 && clientType.TypeId == id)
+                GeneralResponseSingleObject<ClientType> response = new GeneralResponseSingleObject<ClientType>();
+                if (id > 0)
                 {
-                    unitOfWork.ClientType.Update(clientType);
-                    await unitOfWork.SaveChangesAsync();
+                    var clientType = await unitOfWork.ClientType.Find(id);
+                    if(clientType != null)
+                    {
+                        response.Data =  unitOfWork.ClientType.Update(new ClientType { TypeId = id , Title=model.Title});
+                        await unitOfWork.SaveChangesAsync();
+                        response.Message = "Client Type Updated Successffully";
+                    }
+                    else
+                        response.Message = "Client Type Not Found ! ";
                 }
+                else
+                    response.Message = "You Must Insert Client Type ID At First ! ";
+                return response;
             }
             catch (Exception ex)
             {
