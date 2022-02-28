@@ -55,7 +55,7 @@ namespace Risk.Controllers
         /// <param name="city">Model for update</param>
         /// <returns></returns>
         // PUT: api/Governorate/5
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutGovernorate(int id, AddGovernorateDto governorate)
         {
 

@@ -45,8 +45,7 @@ namespace Risk.Controllers
         {
             try
             {
-               return await clientTypeBusiness.GetAll();
-               
+               return await clientTypeBusiness.GetAll(); 
             }
             catch (Exception ex) 
             {
@@ -62,7 +61,7 @@ namespace Risk.Controllers
         /// <param name="id">ID for ClientType</param>
         /// <param name="clientType">Model for update</param>
         /// <returns></returns>
-        [HttpPut("id")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<GeneralResponseSingleObject<ClientType>>> PutClientType(int id, AddClientTypeDto model)
         {
             try
@@ -83,7 +82,7 @@ namespace Risk.Controllers
         /// </summary>
         /// <param name="id">ID for ClientType</param>
         /// <returns></returns>
-        [HttpDelete("id")] 
+        [HttpDelete("{id}")] 
         public async Task<ActionResult<GeneralResponseSingleObject<ClientType>>> DeleteCity(int id)
         {
             try

@@ -17,7 +17,7 @@ namespace Risk_Business_Layer.Repositories.Crud
             try
             {
                 GeneralResponseSingleObject<ClientType> response = new GeneralResponseSingleObject<ClientType>();
-                if (string.IsNullOrEmpty(model.Title))
+                if (!string.IsNullOrEmpty(model.Title))
                 {
                     var res = await unitOfWork.ClientType.Find(x => x.Title == model.Title);
                     if (res != null)
@@ -89,7 +89,8 @@ namespace Risk_Business_Layer.Repositories.Crud
                     var clientType = await unitOfWork.ClientType.Find(id);
                     if(clientType != null)
                     {
-                        response.Data =  unitOfWork.ClientType.Update(new ClientType { TypeId = id , Title=model.Title});
+                        //response.Data =  unitOfWork.ClientType.Update(new ClientType { TypeId = id , Title=model.Title});
+                        clientType.Title = model.Title;
                         await unitOfWork.SaveChangesAsync();
                         response.Message = "Client Type Updated Successffully";
                     }
@@ -102,7 +103,6 @@ namespace Risk_Business_Layer.Repositories.Crud
             }
             catch (Exception ex)
             {
-
                 throw ex.InnerException;
             }
         }

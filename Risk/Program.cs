@@ -37,6 +37,10 @@ builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<RiskDbContext>();
 #endregion
 
+#region Add CORS
+builder.Services.AddCors();
+#endregion
+
 #region Add Context
 builder.Services.AddDbContext<RiskDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 #endregion
@@ -137,6 +141,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+#endregion
+
+#region Allow CORS 
+app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 #endregion
 
 #region To Use Identity

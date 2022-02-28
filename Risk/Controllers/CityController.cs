@@ -53,7 +53,7 @@ namespace Risk.Controllers
         /// <param name="id">ID for CallReason</param>
         /// <param name="city">Model for update</param>
         /// <returns></returns>
-        [HttpPut("id")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<GeneralResponseSingleObject<City>>> PutCity(int id, AddCityDto model)
         {
             try
@@ -104,7 +104,7 @@ namespace Risk.Controllers
         /// <param name="id">ID for City</param>
         /// <returns></returns>
         // DELETE: api/City/5
-        [HttpDelete("id")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCity(int id)
         {
             try
