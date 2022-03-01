@@ -1,4 +1,5 @@
 ﻿using Risk_Business_Layer.IBusiness_Logic.Interfaces;
+using Risk_Domain_Layer.DTO_S.CallReason;
 
 namespace Risk_Business_Layer.Business_Logic.Business
 {
@@ -11,13 +12,13 @@ namespace Risk_Business_Layer.Business_Logic.Business
             this.unitOfWork = unitOfWork;
         }
 
-        public async Task AddAsync(CallReason callReason)
+        public async Task AddAsync(InsertCallReasonDto callReason)
         {
             try
             {
                 if (callReason is not null)
                 {
-                    await unitOfWork.CallReason.Add(callReason);
+                    await unitOfWork.CallReason.Add(new CallReason { Title = callReason.Reason_Title,Order=callReason.Order});
                     await unitOfWork.SaveChangesAsync();
                 }
             }
@@ -46,22 +47,13 @@ namespace Risk_Business_Layer.Business_Logic.Business
             }
         }
 
-        public async Task<IEnumerable<CallReason>> GetByIdAsync(int? id)
-        {
+        public async Task<GeneralResponse<CallReason>> GetAll() 
+        { 
             try
             {
-                if (id is not null)
-                {
-                    var callReason = await unitOfWork.CallReason.Find(c=>c.Id==id);
-
-                    return callReason;
-                }
-                else
-                {
-                    var callReason = await unitOfWork.CallReason.GetAll();
-
-                    return callReason;
-                }
+                GeneralResponse<CallReason> response = new GeneralResponse<CallReason>();
+                response.Data =( await unitOfWork.CallReason.GetAll()).ToList();  
+                return response;
             }
             catch (Exception ex)
             {

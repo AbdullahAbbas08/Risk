@@ -1,6 +1,8 @@
-﻿namespace Risk.Controllers
+﻿using Risk_Domain_Layer.DTO_S.CallReason;
+
+namespace Risk.Controllers
 {
-    
+
     [Route("api/[controller]")]
     [ApiController]
     public class CallReasonController : ControllerBase
@@ -20,22 +22,29 @@
         // GET: api/CallReason/5
 
         //[Authorize(Roles = Roles.Admin + "," + Roles.Agent)]
-        [HttpGet()]
-        public async Task<ActionResult<IEnumerable<CallReason>>> GetCallReason(int? id = null)
+        [HttpGet]
+        public async Task<ActionResult<GeneralResponse<CallReason>>> GetCallReason()
         {
             try
             {
-                var callReasons = await callReasonBusiness.GetByIdAsync(id);
 
-                if (callReasons == null)
-                {
-                    return NoContent();
-                }
+                #region Generate Returned Object TypeOf GeneralResponse
+                GeneralResponse<CallReason> GeneralResponse = new GeneralResponse<CallReason>();
+                #endregion
 
-                return Ok(callReasons);
+                #region Call Service
+                var callReasons = await callReasonBusiness.GetAll();
+                #endregion
 
+                #region return 
+                GeneralResponse.Message = "Successffully";
+                return Ok(GeneralResponse);
+                #endregion
             }
-            catch (Exception ex) { return BadRequest(ex.InnerException); }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
 
         }
 
@@ -68,11 +77,11 @@
         /// <returns></returns>
         // POST: api/Services
         [HttpPost]
-        public async Task<ActionResult<CallReason>> PostCallReason(CallReason callReason)
+        public async Task<ActionResult<CallReason>> PostCallReason(InsertCallReasonDto model)
         {
             try
             {
-                await callReasonBusiness.AddAsync(callReason);
+                await callReasonBusiness.AddAsync(new InsertCallReasonDto { Reason_Title =model.Reason_Title,Order=model.Order });
 
                 return Ok(callReason);
             }

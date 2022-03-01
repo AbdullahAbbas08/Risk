@@ -14,7 +14,5 @@ namespace Risk_Data_Access_Layer.Models
         [Required, Display(Name = "Call Reason Order")]
         public int Order { get; set; }
 
-        [JsonIgnore]
-        public ICollection<Client> Clients { get; set; }
     }
 }
