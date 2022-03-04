@@ -2,10 +2,10 @@
 {
     public interface ISourceMarketingBusiness<T> where T : class
     {
-        Task<IEnumerable<T>> GetByIdAsync(int? id);
+        Task<GeneralResponse<T>> GetAll();
         //Task<IEnumerable<T>> Search(string name);
-        Task AddAsync(SourceMarketing sourceMarketing);
+        Task<GeneralResponseSingleObject<T>> AddAsync(SourceMarketing sourceMarketing);
         Task DeleteAsync(int id);
-        Task UpdateAsync(int id, SourceMarketing sourceMarketing);
+        Task<GeneralResponseSingleObject<T>> UpdateAsync(int id, SourceMarketing sourceMarketing);
     }
 }

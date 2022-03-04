@@ -57,16 +57,17 @@ namespace Risk.Controllers
         /// <returns></returns>
         // PUT: api/CallReason/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCallReason(int id, CallReason callReason)
+        public async Task<ActionResult<GeneralResponseSingleObject<CallReason>>> PutCallReason(int id, InsertCallReasonDto model)
         {
             try
             {
-                await callReasonBusiness.UpdateAsync(id, callReason);
-
-                return Ok("Updated Successfully");
+                return await callReasonBusiness.UpdateAsync(id, new CallReason { Title = model.title, Order = model.order });
             }
 
-            catch (Exception ex) { return BadRequest(ex.InnerException); }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException);
+            }
 
         }
 
@@ -77,17 +78,16 @@ namespace Risk.Controllers
         /// <returns></returns>
         // POST: api/Services
         [HttpPost]
-        public async Task<ActionResult<CallReason>> PostCallReason(InsertCallReasonDto model)
+        public async Task<ActionResult<GeneralResponseSingleObject<CallReason>>> PostCallReason(InsertCallReasonDto model)
         {
             try
             {
-                await callReasonBusiness.AddAsync(new InsertCallReasonDto { Reason_Title =model.Reason_Title,Order=model.Order });
-
-                return Ok(callReason);
+                return await callReasonBusiness.AddAsync(new CallReason { Title = model.title, Order = model.order });
             }
-
-            catch (Exception ex) { return BadRequest(ex.InnerException); }
-
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException);
+            }
         }
 
         /// <summary>

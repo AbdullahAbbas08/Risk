@@ -13,15 +13,18 @@ namespace Risk_Business_Layer.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IUnitOfWork_Crud unitOfWork;
+        private readonly Helper helper;
         private readonly JWT _jwt;
         public AuthService(UserManager<ApplicationUser> userManager,
                             RoleManager<IdentityRole> roleManager,
                             IOptions<JWT> jwt,
-                            IUnitOfWork_Crud unitOfWork)
+                            IUnitOfWork_Crud unitOfWork,
+                            IOptions<Helper> _helper)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             this.unitOfWork = unitOfWork;
+            helper = _helper.Value;
             _jwt = jwt.Value;
         }
 
@@ -68,7 +71,7 @@ namespace Risk_Business_Layer.Services
                 Name = model.Name,
                 CityId = model.CityId,
                 ClientTypeId = model.ClientTypeId,
-                Logo = model.Logo,
+                LogoPath = helper.UploadImage(model.Logo)
             };
             #endregion
 

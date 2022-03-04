@@ -11,8 +11,8 @@ namespace Risk_Business_Layer.IBusiness_Logic.Interfaces
     {
         Task<GeneralResponse<T>> GetAll();
         //Task<IEnumerable<T>> Search(string name);
-        Task AddAsync(InsertCallReasonDto callReason);
+        Task<GeneralResponseSingleObject<T>> AddAsync(CallReason callReason);
         Task DeleteAsync(int id);
-        Task UpdateAsync(int id, CallReason callReason);
+        Task<GeneralResponseSingleObject<T>> UpdateAsync(int id, CallReason callReason);
     }
 }

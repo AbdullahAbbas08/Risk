@@ -1,4 +1,5 @@
-﻿using Risk_Business_Layer.IRepositories.ICrud;
+﻿using Risk_Business_Layer.IRepositories.IClient;
+using Risk_Business_Layer.IRepositories.ICrud;
 using Risk_Business_Layer.Repositories.Crud;
 using Risk_Data_Access_Layer;
 
@@ -37,6 +38,9 @@ namespace Risk_Business_Layer.UnitOfWork.UnitOfWork_Crud
 
         private ICrud<SourceMarketing> _SourceMarketing;
         public ICrud<SourceMarketing> SourceMarketing { get { if (_SourceMarketing == null) { _SourceMarketing = new Crud<SourceMarketing>(riskDbContext); }return _SourceMarketing; } }
+
+        private IClient _client ;
+        public IClient client { get { if (_client == null) { _client = new Risk_Business_Layer.Repositories.Client.Client(riskDbContext); } return _client; } }
 
         public async Task SaveChangesAsync()
         {

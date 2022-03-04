@@ -10,6 +10,8 @@ using Risk_Business_Layer.Services;
 using Risk_Business_Layer.UnitOfWork.UnitOfWork_Crud;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Risk_Business_Layer.Business_Logic.Interfaces;
+using Risk_Business_Layer.IRepositories.IClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,11 +28,14 @@ builder.Services.AddTransient<ICityBusiness<City>, CityBusiness>();
 builder.Services.AddTransient<IGovernorateBusiness<Governorate>, GovernorateBusiness>();
 builder.Services.AddTransient<ISourceMarketingBusiness<SourceMarketing>, SourceMarketingBusiness>();
 builder.Services.AddTransient<IClientTypeBusiness<ClientType>, ClientTypeBusiness>();
+builder.Services.AddTransient<IClientBusiness, ClientBusiness>();
+builder.Services.AddTransient<IClient, Risk_Business_Layer.Repositories.Client.Client>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 #endregion
 
 #region Map Classes Into Appsettings
 builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
+builder.Services.Configure<Helper>(builder.Configuration.GetSection("PATHS"));
 #endregion
 
 #region Apply Identity 

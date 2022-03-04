@@ -15,9 +15,8 @@ namespace Risk_Data_Access_Layer.Models
         public int GovernorateId { get; set; }
 
 
-        [JsonIgnore]
         [ForeignKey("GovernorateId")]
-        public  Governorate Governorate { get; set; }
+        public Governorate Governorate { get; set; }
     }
 
 }

@@ -14,13 +14,13 @@ namespace Risk_Data_Access_Layer.Models
         public int CityId { get; set; }
 
         [ForeignKey("CityId")]
-        public City City { get; set; }
+        public virtual City City { get; set; }
 
         [Required]
         public int ClientTypeId { get; set; } 
 
         [ForeignKey("ClientTypeId")]
-        public   ClientType ClientType { get; set; }
+        public virtual ClientType ClientType { get; set; }
 
         public  ICollection<CallReason> CallReasons { get; set; }
     }

@@ -18,4 +18,3 @@ namespace Risk_Business_Layer.IRepositories.ICrud
         Task<bool> Delete(int ID);
     }
 }
- 

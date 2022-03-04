@@ -11,7 +11,7 @@ namespace Risk_Data_Access_Layer.Models
         [Required, Column(TypeName = "nvarchar(150)"), Display(Name = "Call Reason Title")]
         public string Title { get; set; }
 
-        [Required, Display(Name = "Call Reason Order")]
+        [Required]
         public int Order { get; set; }
 
     }
