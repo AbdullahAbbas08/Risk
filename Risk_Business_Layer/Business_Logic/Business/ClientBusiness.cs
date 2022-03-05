@@ -2,12 +2,8 @@
 using Risk_Business_Layer.Business_Logic.Interfaces;
 using Risk_Business_Layer.Helpers;
 using Risk_Business_Layer.IRepositories.IClient;
+using Risk_Business_Layer.Services.Authentication;
 using Risk_Domain_Layer.DTO_S.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Risk_Business_Layer.Business_Logic.Business
 {
@@ -26,6 +22,17 @@ namespace Risk_Business_Layer.Business_Logic.Business
             throw new NotImplementedException();
         }
 
+        public async Task<GeneralResponseSingleObject<EmptyResponse>> DeleteClient(string ID)
+        {
+            GeneralResponseSingleObject<EmptyResponse> response = new GeneralResponseSingleObject<EmptyResponse>();
+            bool res = unitOfWork.DeleteUser(ID);
+            if (res)
+                response.Message = "تم حذف العميل بنجاح";
+            else
+                response.Message = "هناك مشكلة ؟ حاول مرة أخرى";
+            return response;
+        }
+
         public async Task<GeneralResponse<GetClientDto>> GetAll()
         {
             GeneralResponse<GetClientDto> response = new GeneralResponse<GetClientDto>();
@@ -33,5 +40,14 @@ namespace Risk_Business_Layer.Business_Logic.Business
             response.Message = "data returned Successfully";
             return response;
         }
+
+        public async Task<GeneralResponseSingleObject<Client>> UpdateClient(UpdateClientModel Entity)
+        {
+            if (Entity.Logo != null)
+                Entity.LogoPath = helper.UploadImage(Entity.Logo);
+
+            return  await unitOfWork.UpdateUser(Entity);
+        }
+
     }
 }

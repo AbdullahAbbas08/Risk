@@ -8,5 +8,6 @@ namespace Risk_Business_Layer.Services
         Task<AuthModel> RegisterClient(RegisterClientModel model);
         Task<AuthModel> Login(TokenRequestModel model);
         Task<string> AddRoleAsync(AddRoleModel model);
+        Task DeleteUser(string ID);
     }
 } 

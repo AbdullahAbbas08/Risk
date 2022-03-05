@@ -239,5 +239,10 @@ namespace Risk_Business_Layer.Services
         {
             throw new NotImplementedException();
         }
+
+        public async Task DeleteUser(string ID)
+        {
+          //await _userManager.re;
+        }
     }
 }
