@@ -1,4 +1,5 @@
 ﻿using Risk_Business_Layer.Business_Logic.Interfaces;
+using Risk_Business_Layer.Services;
 using Risk_Business_Layer.Services.Authentication;
 using Risk_Domain_Layer.DTO_S.Client;
 
@@ -9,10 +10,12 @@ namespace Risk.Controllers
     public class ClientController : ControllerBase
     {
         private readonly IClientBusiness clientBusiness;
+        private readonly IAuthService authService;
 
-        public ClientController(IClientBusiness clientBusiness)
+        public ClientController(IClientBusiness clientBusiness, IAuthService authService)
         {
             this.clientBusiness = clientBusiness;
+            this.authService = authService;
         }
 
         [HttpGet]
@@ -35,11 +38,11 @@ namespace Risk.Controllers
         }
         
         [HttpPut]
-        public async Task<ActionResult<GeneralResponseSingleObject<Client>>> Update([FromForm] UpdateClientModel model)
+        public async Task<ActionResult<GeneralResponseSingleObject<UpdateClientModel>>> Update([FromForm] UpdateClientModel model)
         {
             try
             {
-                return await clientBusiness.UpdateClient(model);
+                return await authService.UpdateClient(model);
             }
             catch (Exception ex)
             {

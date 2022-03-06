@@ -1,7 +1,11 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Risk_Business_Layer.Helpers;
+using Risk_Business_Layer.IRepositories.IClient;
+using Risk_Business_Layer.IRepositories.IEmployee;
 using Risk_Business_Layer.Services.Authentication;
+using Risk_Business_Layer.Services.AuthenticationModels;
 using Risk_Data_Access_Layer.Constants;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
@@ -13,23 +17,30 @@ namespace Risk_Business_Layer.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IUnitOfWork_Crud unitOfWork;
+        private readonly IEmployeeRepo employeeRepo;
+        private readonly IClient clientRepo;
         private readonly Helper helper;
         private readonly JWT _jwt;
         public AuthService(UserManager<ApplicationUser> userManager,
                             RoleManager<IdentityRole> roleManager,
                             IOptions<JWT> jwt,
                             IUnitOfWork_Crud unitOfWork,
-                            IOptions<Helper> _helper)
+                            IOptions<Helper> _helper ,
+                            IEmployeeRepo EmployeeRepo,
+                            IClient clientRepo)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             this.unitOfWork = unitOfWork;
+            employeeRepo = EmployeeRepo;
+            this.clientRepo = clientRepo;
             helper = _helper.Value;
             _jwt = jwt.Value;
         }
 
         public async Task<AuthModel> RegisterClient(RegisterClientModel model)
         {
+            Client user = new Client();
             #region model Validation
             string ValidateModel ="" ;
 
@@ -40,7 +51,7 @@ namespace Risk_Business_Layer.Services
                 ValidateModel += " , Address Cannot be Empty";
                
 
-            if (model.Logo == null)
+            if (model.Logo == null && model.LogoPath ==null)
                 ValidateModel += " , Logo Image Cannot be Empty" ;
 
             if ((model.Mobile).Length < 11)
@@ -63,16 +74,38 @@ namespace Risk_Business_Layer.Services
             #endregion
 
             #region Fill Client To Insert
-            var user = new Client
+            if(model.LogoPath == null && model.Logo != null)
             {
-                UserName = model.UserName,
-                Address = model.Address,
-                Mobile = model.Mobile,
-                Name = model.Name,
-                CityId = model.CityId,
-                ClientTypeId = model.ClientTypeId,
-                LogoPath = helper.UploadImage(model.Logo)
-            };
+                user.UserName = model.UserName;
+                user.Address = model.Address;
+                user.Mobile = model.Mobile;
+                user.Name = model.Name;
+                user.CityId = model.CityId;
+                user.ClientTypeId = model.ClientTypeId;
+                user.LogoPath = helper.UploadImage(model.Logo);
+            } 
+            
+            if(model.LogoPath != null && model.Logo == null)
+            {
+                user.UserName = model.UserName;
+                user.Address = model.Address;
+                user.Mobile = model.Mobile;
+                user.Name = model.Name;
+                user.CityId = model.CityId;
+                user.ClientTypeId = model.ClientTypeId;
+                user.LogoPath = model.LogoPath;
+            }
+            
+            if(model.LogoPath != null && model.Logo != null)
+            {
+                user.UserName = model.UserName;
+                user.Address = model.Address;
+                user.Mobile = model.Mobile;
+                user.Name = model.Name;
+                user.CityId = model.CityId;
+                user.ClientTypeId = model.ClientTypeId;
+                user.LogoPath =helper.UploadImage(model.Logo);
+            }
             #endregion
 
             #region Create Client 
@@ -106,6 +139,77 @@ namespace Risk_Business_Layer.Services
                 Username = user.UserName
             };
             #endregion
+
+        }
+
+        public async Task<GeneralResponseSingleObject<UpdateEmployee>> UpdateEmployee(UpdateEmployee model)
+        {
+            GeneralResponseSingleObject<UpdateEmployee> response = new GeneralResponseSingleObject<UpdateEmployee>();
+
+            var employee = (await unitOfWork.Employee.Find(x => x.Id == model.Id)).FirstOrDefault();
+
+            if (employee != null)
+            {
+                employeeRepo.DeleteEmployee(model.Id);
+               var res =  await RegisterEmployee(new RegisterEmployeeModel { 
+                    Address=model.Address,
+                    Mobile=model.Mobile,
+                    Name=model.Name,
+                    NationalId=model.NationalId,
+                    UserName=model.UserName,
+                    Password=model.password 
+               });
+
+                if(res.IsAuthenticated)
+                response.Message = "تم تعديل بيانات الموظف بنجاح";
+                else
+                {
+                    response.Message = "حدث خطأ ما برجاء المحاولة مرة أخرى";
+                    response.Data = model;
+                }
+
+            }
+            else
+            response.Message = "لا توجد بيانات لهذا الكود";
+
+            return response;
+        }
+
+        public async Task<GeneralResponseSingleObject<UpdateClientModel>> UpdateClient(UpdateClientModel model)
+        {
+            GeneralResponseSingleObject<UpdateClientModel> response = new GeneralResponseSingleObject<UpdateClientModel>();
+
+            var client = (await unitOfWork.Client.Find(x => x.Id == model.Id)).FirstOrDefault();
+
+            if (client != null)
+            {
+                clientRepo.DeleteUser(model.Id);
+                var res = await RegisterClient(new RegisterClientModel
+                {
+                   Address=model.Address,
+                   CityId=model.CityId,
+                   ClientTypeId=model.ClientTypeId,
+                   Mobile=model.Mobile,
+                   Name = model.Name,
+                   UserName=model.UserName,
+                   Logo = model.Logo,
+                   LogoPath=model.LogoPath,
+                   Password= model.Password
+                });
+
+                if (res.IsAuthenticated)
+                    response.Message = "تم تعديل بيانات العميل بنجاح";
+                else
+                {
+                    response.Message = "حدث خطأ ما برجاء المحاولة مرة أخرى";
+                    response.Data = model;
+                }
+
+            }
+            else
+                response.Message = "لا توجد بيانات لهذا الكود";
+
+            return response;
 
         }
 

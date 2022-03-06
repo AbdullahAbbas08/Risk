@@ -14,6 +14,7 @@ namespace Risk_Domain_Layer.DTO_S.Employee
         public string Mobile { get; set; }
         public string Address { get; set; }
         public string UserName { get; set; }
+        public string password { get; set; }
     }
 
 }

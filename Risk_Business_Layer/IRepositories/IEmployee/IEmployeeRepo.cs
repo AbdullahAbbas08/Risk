@@ -12,7 +12,6 @@ namespace Risk_Business_Layer.IRepositories.IEmployee
     {
         Task<GeneralResponse<GetEmployeeDto>> GetAll();
         GeneralResponseSingleObject<EmptyResponse> DeleteEmployee(string ID);  
-        Task<GeneralResponseSingleObject<EmptyResponse>> UpdateEmployee(UpdateEmployee model); 
 
     }
 }

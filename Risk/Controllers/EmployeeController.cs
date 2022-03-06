@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Risk_Business_Layer.IRepositories.IEmployee;
+using Risk_Business_Layer.Services;
 using Risk_Business_Layer.Services.AuthenticationModels;
 using Risk_Domain_Layer.DTO_S.Employee;
 
@@ -11,10 +12,12 @@ namespace Risk.Controllers
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeRepo Employee;
+        private readonly IAuthService authService;
 
-        public EmployeeController(IEmployeeRepo _Employee)
+        public EmployeeController(IEmployeeRepo _Employee, IAuthService authService)
         {
             this.Employee = _Employee;
+            this.authService = authService;
         }
 
         [HttpGet]
@@ -37,11 +40,11 @@ namespace Risk.Controllers
         }
 
         [HttpPut]
-        public async Task<GeneralResponseSingleObject<EmptyResponse>> Update(UpdateEmployee model)
+        public async Task<GeneralResponseSingleObject<UpdateEmployee>> Update(UpdateEmployee model)
         {
             try
             {
-                return await Employee.UpdateEmployee(model);
+                return await authService.UpdateEmployee(model);
             }
             catch (Exception ex)
             {

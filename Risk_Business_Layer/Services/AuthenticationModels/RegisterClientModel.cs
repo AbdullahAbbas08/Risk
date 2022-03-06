@@ -6,6 +6,7 @@ namespace Risk_Business_Layer.Services.Authentication
     public class RegisterClientModel : RegisterModel
     {  
         public IFormFile? Logo { get; set; }
+        public string? LogoPath { get; set; }
 
         [Required]
         public int CityId { get; set; }

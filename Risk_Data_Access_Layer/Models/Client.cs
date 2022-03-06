@@ -9,7 +9,7 @@ namespace Risk_Data_Access_Layer.Models
         public string LogoPath { get; set; }
 
         [NotMapped]
-        public IFormFile Logo { get; set; }
+        public IFormFile? Logo { get; set; }
 
         public int CityId { get; set; }
 

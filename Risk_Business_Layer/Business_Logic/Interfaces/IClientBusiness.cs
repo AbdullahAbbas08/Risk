@@ -7,6 +7,5 @@ namespace Risk_Business_Layer.Business_Logic.Interfaces
         Task AssignClientToAgent(Client Entity);
         Task<GeneralResponse<GetClientDto>> GetAll();
         Task<GeneralResponseSingleObject<EmptyResponse>> DeleteClient(string ID);
-        Task<GeneralResponseSingleObject<Client>> UpdateClient(UpdateClientModel Entity);
     }
 }

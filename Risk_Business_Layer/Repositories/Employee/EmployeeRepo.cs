@@ -12,6 +12,7 @@ namespace Risk_Business_Layer.Repositories.EmployeeRepo
     {
         private readonly RiskDbContext riskDbContext;
 
+
         public EmployeeRepo(RiskDbContext riskDbContext) : base(riskDbContext)
         {
             this.riskDbContext = riskDbContext;
@@ -56,34 +57,12 @@ namespace Risk_Business_Layer.Repositories.EmployeeRepo
               Mobile = x.Mobile,
               Name = x.Name,
               NationalId = x.NationalId,
-              UserName=x.UserName,  
+              UserName=x.UserName, 
+              password=x.PasswordHash
            }).ToListAsync();
 
             return new GeneralResponse<GetEmployeeDto> { Data=Employee,Message="Data returned Successfully"};
         } 
 
-        public async Task<GeneralResponseSingleObject<EmptyResponse>> UpdateEmployee(UpdateEmployee model)
-        {
-            GeneralResponseSingleObject<EmptyResponse> response = new GeneralResponseSingleObject<EmptyResponse>();
-
-            var employee = (from item in riskDbContext.employees
-                                 where item.Id == model.Id
-                                 select item).FirstOrDefault();
-
-            if (employee != null)
-            {
-               employee.UserName = model.UserName;
-                employee.Name = model.Name; 
-                employee.NationalId = model.NationalId;
-                employee.Mobile = model.Mobile;
-                employee.Address = model.Address;
-
-                await riskDbContext.SaveChangesAsync();
-
-                response.Message = "تم تعديل بيانات الموظف بنجاح";
-            }
-
-            return response;
-        }
     }
 }

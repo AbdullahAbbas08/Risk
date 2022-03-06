@@ -41,13 +41,5 @@ namespace Risk_Business_Layer.Business_Logic.Business
             return response;
         }
 
-        public async Task<GeneralResponseSingleObject<Client>> UpdateClient(UpdateClientModel Entity)
-        {
-            if (Entity.Logo != null)
-                Entity.LogoPath = helper.UploadImage(Entity.Logo);
-
-            return  await unitOfWork.UpdateUser(Entity);
-        }
-
     }
 }

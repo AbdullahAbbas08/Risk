@@ -1,4 +1,5 @@
 ﻿using Risk_Business_Layer.Services.Authentication;
+using Risk_Business_Layer.Services.AuthenticationModels;
 
 namespace Risk_Business_Layer.Services
 {
@@ -8,5 +9,8 @@ namespace Risk_Business_Layer.Services
         Task<AuthModel> RegisterClient(RegisterClientModel model);
         Task<AuthModel> Login(TokenRequestModel model);
         Task<string> AddRoleAsync(AddRoleModel model);
+        Task<GeneralResponseSingleObject<UpdateEmployee>> UpdateEmployee(UpdateEmployee model);
+        Task<GeneralResponseSingleObject<UpdateClientModel>> UpdateClient(UpdateClientModel Entity);
+
     }
 } 
