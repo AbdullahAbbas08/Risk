@@ -12,6 +12,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Risk_Business_Layer.Business_Logic.Interfaces;
 using Risk_Business_Layer.IRepositories.IClient;
+using Risk_Business_Layer.IRepositories.IEmployee;
+using Risk_Business_Layer.Repositories.EmployeeRepo;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +32,7 @@ builder.Services.AddTransient<ISourceMarketingBusiness<SourceMarketing>, SourceM
 builder.Services.AddTransient<IClientTypeBusiness<ClientType>, ClientTypeBusiness>();
 builder.Services.AddTransient<IClientBusiness, ClientBusiness>();
 builder.Services.AddTransient<IClient, Risk_Business_Layer.Repositories.Client.Client>();
+builder.Services.AddTransient<IEmployeeRepo, EmployeeRepo>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 #endregion
 

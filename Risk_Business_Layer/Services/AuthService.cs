@@ -126,7 +126,7 @@ namespace Risk_Business_Layer.Services
             if ((model.Mobile).Length < 11)
                 ValidateModel += " , Mobile Number Invalid ";
 
-            if (string.IsNullOrEmpty(ValidateModel))
+            if (!string.IsNullOrEmpty(ValidateModel))
                 return new AuthModel { Message = ValidateModel };
             #endregion
 
@@ -240,9 +240,5 @@ namespace Risk_Business_Layer.Services
             throw new NotImplementedException();
         }
 
-        public async Task DeleteUser(string ID)
-        {
-          //await _userManager.re;
-        }
     }
 }

@@ -6,9 +6,7 @@ namespace Risk_Business_Layer.IRepositories.IClient
     public interface IClient: ICrud<Client>
     {
         Task<IEnumerable<GetClientDto>> GetAllWithRelatedTitles();
-
         bool DeleteUser(string ID);
         Task<GeneralResponseSingleObject<Client>> UpdateUser(UpdateClientModel model);
-
     }
 }
