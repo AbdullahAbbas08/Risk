@@ -14,5 +14,7 @@ namespace Risk_Data_Access_Layer.Models
         [Required]
         public int Order { get; set; }
 
+        public ICollection<ClientType> ClientType { get; set; }
+
     }
-}
+} 

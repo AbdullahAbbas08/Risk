@@ -3,6 +3,7 @@ using Risk_Business_Layer.Business_Logic.Interfaces;
 using Risk_Business_Layer.Helpers;
 using Risk_Business_Layer.IRepositories.IClient;
 using Risk_Business_Layer.Services.Authentication;
+using Risk_Domain_Layer.DTO_S;
 using Risk_Domain_Layer.DTO_S.Client;
 
 namespace Risk_Business_Layer.Business_Logic.Business
@@ -37,6 +38,19 @@ namespace Risk_Business_Layer.Business_Logic.Business
         {
             GeneralResponse<GetClientDto> response = new GeneralResponse<GetClientDto>();
             response.Data = (await unitOfWork.GetAllWithRelatedTitles()).ToList();
+            response.Message = "data returned Successfully";
+            return response;
+        }
+        
+        public async Task<GeneralResponse<IdNameList>> GetAllIdName()
+        {
+            GeneralResponse<IdNameList> response = new GeneralResponse<IdNameList>();
+            response.Data = (await unitOfWork.GetAllWithRelatedTitles()).Select(x=>
+                new IdNameList
+                {
+                    Id = x.ClientId,
+                    Name = x.Name,
+                }).ToList();
             response.Message = "data returned Successfully";
             return response;
         }

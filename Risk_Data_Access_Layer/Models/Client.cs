@@ -22,6 +22,7 @@ namespace Risk_Data_Access_Layer.Models
         [ForeignKey("ClientTypeId")]
         public virtual ClientType ClientType { get; set; }
 
-        public  ICollection<CallReason> CallReasons { get; set; }
+        public ICollection<CustomerServise> Customer { get; set; }
+
     }
 }

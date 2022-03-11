@@ -11,6 +11,8 @@
         [Column(TypeName = "nvarchar(150)")]
         [Display(Name = "Client Type Title")]
         public string Title { get; set; }
+
+        public ICollection<CallReason> CallReasons { get; set; }
     }
 
 }

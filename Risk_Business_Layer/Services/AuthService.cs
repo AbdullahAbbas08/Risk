@@ -272,7 +272,7 @@ namespace Risk_Business_Layer.Services
                 Username = user.UserName
             };
             #endregion
-        }
+        }       
 
         public async Task<AuthModel> Login(TokenRequestModel model) 
         {
