@@ -8,4 +8,10 @@
         public string Token { get; set; }
         public DateTime ExpiresOn { get; set; }
     }
+
+    public class CreatedUser : AuthModel
+    {
+        public string ID_Created { get; set; }
+    }
 }
+ 

@@ -25,6 +25,12 @@ namespace Risk_Business_Layer.Repositories.Crud
            await riskDbContext.AddAsync(Entity);
            return Entity;
         }
+
+        public async Task<List<T>> AddRange(List<T> Entities)
+        {
+            await riskDbContext.AddRangeAsync(Entities);
+            return Entities;
+        }
         #endregion
 
         #region Delete

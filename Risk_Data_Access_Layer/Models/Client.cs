@@ -23,6 +23,5 @@ namespace Risk_Data_Access_Layer.Models
         public virtual ClientType ClientType { get; set; }
 
         public ICollection<CustomerServise> Customer { get; set; }
-
     }
 }

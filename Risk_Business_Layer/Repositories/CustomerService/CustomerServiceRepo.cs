@@ -18,7 +18,7 @@ namespace Risk_Business_Layer.Repositories.CustomerServices
             this.riskDbContext = riskDbContext;
         }
 
-        public async Task AddRange(List<ClientCustomerService> Entity)
+        public async Task AddRange(List<ClientCustomerServise> Entity)
         {
             await riskDbContext.AddRangeAsync(Entity);
             await riskDbContext.SaveChangesAsync();

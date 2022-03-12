@@ -19,7 +19,7 @@
         public DbSet<Call> Call { get; set; } 
         public DbSet<AgentClient> AgentClients { get; set; }   
         public DbSet<CustomerServise> CustomerServise { get; set; }    
-        public DbSet<ClientCustomerService> ClientCustomerService { get; set; }     
+        public DbSet<ClientCustomerServise> ClientCustomerServise { get; set; }      
          
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -45,8 +45,11 @@
             //    .ToTable("Users")
             //    .Ignore(e => e.Email);
 
+            builder.Entity<ClientCustomerServise>()
+            .HasKey(t => new { t.ClientId, t.CustomerId });
+
 
         }
-
+         
     }
 }

@@ -42,6 +42,12 @@ namespace Risk_Business_Layer.UnitOfWork.UnitOfWork_Crud
         private IClient _client ;
         public IClient client { get { if (_client == null) { _client = new Risk_Business_Layer.Repositories.Client.Client(riskDbContext); } return _client; } }
 
+        private ICrud<ClientCustomerServise> _ClientCustomerServise;
+        public ICrud<ClientCustomerServise> ClientCustomerServise { get { if (_ClientCustomerServise == null) { _ClientCustomerServise = new Crud<ClientCustomerServise>(riskDbContext); } return _ClientCustomerServise; } } 
+        
+        private ICrud<Customer> _Customer;
+        public ICrud<Customer> Customer { get { if (_Customer == null) { _Customer = new Crud<Customer>(riskDbContext); } return _Customer; } }
+
         public async Task SaveChangesAsync()
         {
            await riskDbContext.SaveChangesAsync();   

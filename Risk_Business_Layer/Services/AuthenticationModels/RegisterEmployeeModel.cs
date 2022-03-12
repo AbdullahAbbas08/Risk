@@ -7,6 +7,7 @@ namespace Risk_Business_Layer.Services.Authentication
     {
         [Required, Column(TypeName = "varchar(14)"), MaxLength(14), MinLength(14), Display(Name = "National Id")]
         public string NationalId { get; set; }
+        public string Role  { get; set; }
     }
-
+     
 }

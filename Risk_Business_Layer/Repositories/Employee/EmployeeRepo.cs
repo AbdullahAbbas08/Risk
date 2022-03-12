@@ -4,6 +4,7 @@ using Risk_Business_Layer.IRepositories.IEmployee;
 using Risk_Business_Layer.Repositories.Crud;
 using Risk_Business_Layer.Services.AuthenticationModels;
 using Risk_Data_Access_Layer;
+using Risk_Data_Access_Layer.Constants;
 using Risk_Domain_Layer.DTO_S.Employee;
 
 namespace Risk_Business_Layer.Repositories.EmployeeRepo
@@ -11,11 +12,14 @@ namespace Risk_Business_Layer.Repositories.EmployeeRepo
     public class EmployeeRepo : Crud<Employee>, IEmployeeRepo
     {
         private readonly RiskDbContext riskDbContext;
+        private readonly UserManager<ApplicationUser> userManager;
 
-
-        public EmployeeRepo(RiskDbContext riskDbContext) : base(riskDbContext)
+        public EmployeeRepo(RiskDbContext riskDbContext , 
+                            UserManager<ApplicationUser> userManager 
+                            ) : base(riskDbContext)
         {
-            this.riskDbContext = riskDbContext;
+            this.riskDbContext = riskDbContext; 
+            this.userManager = userManager;
         } 
 
         public GeneralResponseSingleObject<EmptyResponse> DeleteEmployee(string ID)
@@ -46,23 +50,39 @@ namespace Risk_Business_Layer.Repositories.EmployeeRepo
 
         }
 
-        public async Task<GeneralResponse<GetEmployeeDto>> GetAll()
+        public async Task<GeneralResponse<GetEmployeeDto>> GetAll(string Role)
         {
-           
-            var Employee = await riskDbContext.employees.Select(x =>
+            string admin = Roles.Admin;
+            string agent = Roles.Agent; 
+
+            if (!(Role == admin  || Role == agent))
+            {
+                return new GeneralResponse<GetEmployeeDto> { Data = null, Message = " Incorrect Role " };
+            }
+
+            var usersOfRole = (await  userManager.GetUsersInRoleAsync(Role)).Select(x => x.Id).ToList();
+
+            var employee = from x in riskDbContext.employees
+                           where (from y in usersOfRole select y).Contains(x.Id)
+                           select x;
+
+            var ListEmployee = ( employee.Select(x =>
            new GetEmployeeDto
            {
-               ID=x.Id,
-              Address = x.Address,
-              Mobile = x.Mobile,
-              Name = x.Name,
-              NationalId = x.NationalId,
-              UserName=x.UserName, 
-              password=x.PasswordHash
-           }).ToListAsync();
+               ID = x.Id,
+               Address = x.Address,
+               Mobile = x.Mobile,
+               Name = x.Name,
+               NationalId = x.NationalId,
+               UserName = x.UserName,
+               password = x.PasswordHash
+           })).ToList();
 
-            return new GeneralResponse<GetEmployeeDto> { Data=Employee,Message="Data returned Successfully"};
-        } 
+            List<GetEmployeeDto> EmpList = new List<GetEmployeeDto>();
+            EmpList = ListEmployee.ToList();
+            return new GeneralResponse<GetEmployeeDto> { Data = EmpList, Message = "Data returned Successfully" };
+        }
 
+       
     }
 }

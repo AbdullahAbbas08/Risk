@@ -10,9 +10,8 @@ namespace Risk_Business_Layer.IRepositories.IEmployee
 {
     public interface IEmployeeRepo
     {
-        Task<GeneralResponse<GetEmployeeDto>> GetAll();
+        Task<GeneralResponse<GetEmployeeDto>> GetAll(string Role);
         GeneralResponseSingleObject<EmptyResponse> DeleteEmployee(string ID);  
-
     }
 }
  

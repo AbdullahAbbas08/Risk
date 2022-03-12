@@ -10,10 +10,12 @@ namespace Risk_Business_Layer.IUnitOfWork.IUnitOfWork_Crud
         ICrud<Governorate> Governorate { get; }
         ICrud<ClientType> ClientType { get; }
         ICrud<Client> Client { get;  }
+        ICrud<Customer> Customer { get;  }
         ICrud<AgentClient> AgentClient { get;  }
         ICrud<Employee> Employee { get;  }
         ICrud<SourceMarketing> SourceMarketing  { get; }
+        ICrud<ClientCustomerServise> ClientCustomerServise { get; }
         IClient client { get; }
         Task SaveChangesAsync();
     } 
-}
+} 

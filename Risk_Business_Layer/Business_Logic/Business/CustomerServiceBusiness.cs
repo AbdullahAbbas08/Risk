@@ -20,10 +20,18 @@ namespace Risk_Business_Layer.Business_Logic.Business
             this.riskDbContext = riskDbContext;
         }
 
-        public async Task AddRange(ClientCustomerService model)
+        public async Task AddRange(ClientCustomerServise model)
         {
             await riskDbContext.AddAsync(model);
            await riskDbContext.SaveChangesAsync();
+        }
+
+        public GeneralResponse<ClientCustomerServise> GetCustomerRelatedWithAgent(string Id)
+        {
+            GeneralResponse<ClientCustomerServise> response = new GeneralResponse<ClientCustomerServise>();
+            response.Data = riskDbContext.ClientCustomerServise.Where(x => x.CustomerId == Id).ToList();
+            response.Message = "Success";
+            return response;
         }
     }
 }

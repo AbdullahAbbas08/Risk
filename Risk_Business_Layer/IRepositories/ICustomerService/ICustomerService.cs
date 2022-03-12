@@ -9,7 +9,7 @@ namespace Risk_Business_Layer.IRepositories.ICustomerService
 {
     public interface ICustomerService
     {
-        Task AddRange(List<ClientCustomerService> idName);
+        Task AddRange(List<ClientCustomerServise> idName);
     }
 
 }

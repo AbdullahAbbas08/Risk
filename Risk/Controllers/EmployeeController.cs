@@ -21,9 +21,9 @@ namespace Risk.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<GeneralResponse<GetEmployeeDto>>> GetAll()
+        public async Task<ActionResult<GeneralResponse<GetEmployeeDto>>> GetAll(string Role)
         {
-            return await Employee.GetAll();
+            return await Employee.GetAll(Role);
         }
 
         [HttpDelete("{id}")]

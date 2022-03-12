@@ -14,7 +14,8 @@ namespace Risk_Business_Layer.IRepositories.ICrud
         Task<T> Find(int ID);
         Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate);
         Task<T> Add(T Entity);
+        Task<List<T>> AddRange(List<T> Entity);
         T Update(T Entity);
-        Task<bool> Delete(int ID);
+        Task<bool> Delete(int ID); 
     }
 }

@@ -118,25 +118,26 @@ namespace Risk_Business_Layer.Services
                 foreach (var error in result.Errors)
                     errors += $"{error.Description},";
 
-                return new AuthModel { Message = errors  };
+                return new CreatedUser { Message = errors  };
             }
             #endregion
 
-            //#region Assign Default Role To Client
-            //await _userManager.AddToRoleAsync(user, Roles.Client);
-            //#endregion
+            #region Assign Default Role To Client
+            await _userManager.AddToRoleAsync(user, Roles.Client);
+            #endregion
 
             #region Create Toaken
             var jwtSecurityToken = await CreateJwtToken(user);
             #endregion
 
             #region return Authentication Model 
-            return new AuthModel
+            return new CreatedUser
             {
                 ExpiresOn = jwtSecurityToken.ValidTo,
                 IsAuthenticated = true,
                 Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
-                Username = user.UserName
+                Username = user.UserName,
+                ID_Created = user.Id
             };
             #endregion
 
@@ -230,8 +231,15 @@ namespace Risk_Business_Layer.Services
             if ((model.Mobile).Length < 11)
                 ValidateModel += " , Mobile Number Invalid ";
 
+            if (!(Roles.Admin == model.Role || Roles.Agent == model.Role))
+                ValidateModel += " , Invalid Role ";
+
+            
+
+
             if (!string.IsNullOrEmpty(ValidateModel))
-                return new AuthModel { Message = ValidateModel };
+                return new CreatedUser { Message = ValidateModel };
+           
             #endregion
 
             #region Fill Employee To Insert
@@ -259,17 +267,25 @@ namespace Risk_Business_Layer.Services
             }
             #endregion
 
+            #region Assign Default Role To Client
+            ApplicationUser ReturenEmployee = await _userManager.FindByIdAsync(user.Id);
+            await _userManager.AddToRoleAsync(ReturenEmployee, model.Role);
+            #endregion
+
             #region Create Toaken
             var jwtSecurityToken = await CreateJwtToken(user);
             #endregion
 
+
+
             #region return Authentication Model 
-            return new AuthModel
+            return new CreatedUser
             {
                 ExpiresOn = jwtSecurityToken.ValidTo,
                 IsAuthenticated = true,
                 Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
-                Username = user.UserName
+                Username = user.UserName,
+               ID_Created = user.Id
             };
             #endregion
         }       

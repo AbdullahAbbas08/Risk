@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Risk_Domain_Layer.DTO_S.CustomerService
+namespace Risk_Data_Access_Layer.Models
 {
-    public class InsertCustomerServ
+    public class ClientCustomerServise
     {
         public string ClientId { get; set; }
 
-        public string CustomerServiseId { get; set; }
+        public string CustomerId { get; set; } 
     }
 }
+
+ 

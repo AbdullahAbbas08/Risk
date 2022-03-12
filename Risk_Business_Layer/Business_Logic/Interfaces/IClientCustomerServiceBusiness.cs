@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Risk_Business_Layer.Business_Logic.Interfaces
 {
-    public interface ICustomerServiceBusiness
+    public interface IClientCustomerServiceBusiness
     {
-        Task AddRange(ClientCustomerServise model);
-        GeneralResponse<ClientCustomerServise> GetCustomerRelatedWithAgent(string Id);
+        Task<GeneralResponseSingleObject<List<ClientCustomerServise>>> AddAsync(List<ClientCustomerServise> model);
     }
 }

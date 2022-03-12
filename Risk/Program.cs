@@ -36,7 +36,9 @@ builder.Services.AddTransient<IClientBusiness, ClientBusiness>();
 builder.Services.AddTransient<IClient, Risk_Business_Layer.Repositories.Client.Client>();
 builder.Services.AddTransient<IEmployeeRepo, EmployeeRepo>();
 builder.Services.AddTransient<ICustomerService, CustomerServiceRepo>();
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddTransient<IClientCustomerServiceBusiness, ClientCustomerServiceBusiness>();
+builder.Services.AddTransient<ICustomerServiceBusiness, CustomerServiceBusiness>();
+builder.Services.AddScoped<IAuthService, AuthService>(); 
 #endregion
 
 #region Map Classes Into Appsettings

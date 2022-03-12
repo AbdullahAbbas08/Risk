@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Risk_Business_Layer.Business_Logic.Interfaces;
-using Risk_Domain_Layer.DTO_S.CustomerService;
+﻿using Risk_Business_Layer.Business_Logic.Interfaces;
 
 namespace Risk.Controllers
 {
@@ -10,24 +7,32 @@ namespace Risk.Controllers
     public class CustomerServiceController : ControllerBase
     {
         private readonly ICustomerServiceBusiness customerService;
+        private readonly IClientCustomerServiceBusiness clientCustomerServise;
 
-        public CustomerServiceController(ICustomerServiceBusiness customerService)
+        public CustomerServiceController(ICustomerServiceBusiness customerService , IClientCustomerServiceBusiness _ClientCustomerServise)
         {
             this.customerService = customerService;
+            clientCustomerServise = _ClientCustomerServise;
         }
 
         [HttpPost]
-        public async Task<ActionResult<string>> Addrange(InsertCustomerServ model)
+        public async Task<ActionResult<GeneralResponseSingleObject<List<ClientCustomerServise>>>> InsertClientCustomerServise(List<ClientCustomerServise> model)
         {
             try
             {
-                await customerService.AddRange(new ClientCustomerService { ClientId = model.ClientId,CustomerServiseId=model.CustomerServiseId});
-                return "success";
+                return await clientCustomerServise.AddAsync(model);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpGet]
+        public GeneralResponse<ClientCustomerServise> GetCustomerRelatedWithAgent(string id)
+        {
+            return customerService.GetCustomerRelatedWithAgent(id);
+        }
+
     }
 }
