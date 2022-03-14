@@ -1,4 +1,5 @@
 ﻿using Risk_Business_Layer.Business_Logic.Interfaces;
+using Risk_Domain_Layer.DTO_S.Client;
 
 namespace Risk.Controllers
 {
@@ -29,7 +30,7 @@ namespace Risk.Controllers
         }
 
         [HttpGet]
-        public GeneralResponse<ClientCustomerServise> GetCustomerRelatedWithAgent(string id)
+        public GeneralResponse<Client_Name_Id> GetCustomerRelatedWithAgent(string id)
         {
             return customerService.GetCustomerRelatedWithAgent(id);
         }

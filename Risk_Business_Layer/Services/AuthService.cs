@@ -151,6 +151,7 @@ namespace Risk_Business_Layer.Services
 
             if (employee != null)
             {
+                employee.
                 employeeRepo.DeleteEmployee(model.Id);
                var res =  await RegisterEmployee(new RegisterEmployeeModel { 
                     Address=model.Address,
@@ -158,7 +159,8 @@ namespace Risk_Business_Layer.Services
                     Name=model.Name,
                     NationalId=model.NationalId,
                     UserName=model.UserName,
-                    Password=model.password 
+                    Password=model.password ,
+                    Role = model.Role
                });
 
                 if(res.IsAuthenticated)
