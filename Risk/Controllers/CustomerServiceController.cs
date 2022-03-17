@@ -1,5 +1,6 @@
 ﻿using Risk_Business_Layer.Business_Logic.Interfaces;
 using Risk_Domain_Layer.DTO_S.Client;
+using Risk_Domain_Layer.DTO_S.ClientCustomerService;
 
 namespace Risk.Controllers
 {
@@ -17,7 +18,7 @@ namespace Risk.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<GeneralResponseSingleObject<List<ClientCustomerServise>>>> InsertClientCustomerServise(List<ClientCustomerServise> model)
+        public async Task<ActionResult<GeneralResponseSingleObject<List<ClientCustomerServise>>>> InsertClientCustomerServise(List<ClientCustomer> model)
         {
             try
             {

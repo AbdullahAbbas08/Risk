@@ -12,8 +12,8 @@ using Risk_Data_Access_Layer;
 namespace Risk_Data_Access_Layer.Migrations
 {
     [DbContext(typeof(RiskDbContext))]
-    [Migration("20220305085510_addCode")]
-    partial class addCode
+    [Migration("20220317105621_change")]
+    partial class change
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -244,6 +244,9 @@ namespace Risk_Data_Access_Layer.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -364,9 +367,6 @@ namespace Risk_Data_Access_Layer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("ClientId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("Order")
                         .HasColumnType("int");
 
@@ -376,9 +376,30 @@ namespace Risk_Data_Access_Layer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId");
-
                     b.ToTable("CallReasons", "dbo");
+                });
+
+            modelBuilder.Entity("Risk_Data_Access_Layer.Models.CallReasonClientType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CallReasonId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ClientTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CallReasonId");
+
+                    b.HasIndex("ClientTypeId");
+
+                    b.ToTable("CallReasonClientType");
                 });
 
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.City", b =>
@@ -401,6 +422,31 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.HasIndex("GovernorateId");
 
                     b.ToTable("Cities", "dbo");
+                });
+
+            modelBuilder.Entity("Risk_Data_Access_Layer.Models.ClientCustomerServise", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("ClientCustomerServise");
                 });
 
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.ClientType", b =>
@@ -620,11 +666,23 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.Navigation("SourceMarketing");
                 });
 
-            modelBuilder.Entity("Risk_Data_Access_Layer.Models.CallReason", b =>
+            modelBuilder.Entity("Risk_Data_Access_Layer.Models.CallReasonClientType", b =>
                 {
-                    b.HasOne("Risk_Data_Access_Layer.Models.Client", null)
-                        .WithMany("CallReasons")
-                        .HasForeignKey("ClientId");
+                    b.HasOne("Risk_Data_Access_Layer.Models.CallReason", "CallReason")
+                        .WithMany()
+                        .HasForeignKey("CallReasonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Risk_Data_Access_Layer.Models.ClientType", "clientType")
+                        .WithMany()
+                        .HasForeignKey("ClientTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CallReason");
+
+                    b.Navigation("clientType");
                 });
 
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.City", b =>
@@ -636,6 +694,25 @@ namespace Risk_Data_Access_Layer.Migrations
                         .IsRequired();
 
                     b.Navigation("Governorate");
+                });
+
+            modelBuilder.Entity("Risk_Data_Access_Layer.Models.ClientCustomerServise", b =>
+                {
+                    b.HasOne("Risk_Data_Access_Layer.Models.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Risk_Data_Access_Layer.Models.Employee", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.Client", b =>
@@ -695,11 +772,6 @@ namespace Risk_Data_Access_Layer.Migrations
                         .HasForeignKey("Risk_Data_Access_Layer.Models.Employee", "Id")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Risk_Data_Access_Layer.Models.Client", b =>
-                {
-                    b.Navigation("CallReasons");
                 });
 #pragma warning restore 612, 618
         }

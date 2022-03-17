@@ -1,4 +1,5 @@
-﻿using Risk_Business_Layer.IRepositories.IClient;
+﻿using Risk_Business_Layer.Business_Logic.Interfaces;
+using Risk_Business_Layer.IRepositories.IClient;
 using Risk_Business_Layer.IRepositories.ICrud; 
 
 namespace Risk_Business_Layer.IUnitOfWork.IUnitOfWork_Crud
@@ -15,7 +16,8 @@ namespace Risk_Business_Layer.IUnitOfWork.IUnitOfWork_Crud
         ICrud<Employee> Employee { get;  }
         ICrud<SourceMarketing> SourceMarketing  { get; }
         ICrud<ClientCustomerServise> ClientCustomerServise { get; }
+        ICrud<CallReasonClientType> CallReasonClientType { get; }
         IClient client { get; }
-        Task SaveChangesAsync();
+        Task SaveChangesAsync(); 
     } 
-} 
+}  

@@ -38,6 +38,7 @@ builder.Services.AddTransient<IEmployeeRepo, EmployeeRepo>();
 builder.Services.AddTransient<ICustomerService, CustomerServiceRepo>();
 builder.Services.AddTransient<IClientCustomerServiceBusiness, ClientCustomerServiceBusiness>();
 builder.Services.AddTransient<ICustomerServiceBusiness, CustomerServiceBusiness>();
+builder.Services.AddTransient<ICallReasonClientTypeBusiness, CallReasonClientTypeBusiness>();
 builder.Services.AddScoped<IAuthService, AuthService>(); 
 #endregion
 
@@ -129,7 +130,7 @@ var logger = loggerFactory.CreateLogger("app");
 
 try
 {
-    var userManager = services.GetRequiredService<UserManager<Employee>>();
+    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
     await DefaultRoles.SeedRole(roleManager);

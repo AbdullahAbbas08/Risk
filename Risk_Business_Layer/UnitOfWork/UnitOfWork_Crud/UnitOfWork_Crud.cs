@@ -47,6 +47,9 @@ namespace Risk_Business_Layer.UnitOfWork.UnitOfWork_Crud
         
         private ICrud<Customer> _Customer;
         public ICrud<Customer> Customer { get { if (_Customer == null) { _Customer = new Crud<Customer>(riskDbContext); } return _Customer; } }
+        
+        private ICrud<CallReasonClientType> _CallReasonClientType;
+        public ICrud<CallReasonClientType> CallReasonClientType { get { if (_CallReasonClientType == null) { _CallReasonClientType = new Crud<CallReasonClientType>(riskDbContext); } return _CallReasonClientType; } }
 
         public async Task SaveChangesAsync()
         {

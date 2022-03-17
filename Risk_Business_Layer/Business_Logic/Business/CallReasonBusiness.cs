@@ -20,8 +20,9 @@ namespace Risk_Business_Layer.Business_Logic.Business
 
                 if (callReason is not null)
                 {
-                    response.Data = await unitOfWork.CallReason.Add(callReason);
+                   var res = await unitOfWork.CallReason.Add(callReason);
                     await unitOfWork.SaveChangesAsync();
+                    response.Data = callReason;
                     response.Message = "تم ادخال السبب بنجاح";
                 }
                 return response;
@@ -56,7 +57,7 @@ namespace Risk_Business_Layer.Business_Logic.Business
             try
             {
                 GeneralResponse<CallReason> response = new GeneralResponse<CallReason>();
-                response.Data = (await unitOfWork.CallReason.GetAll()).OrderByDescending(x => x.Order).ToList();
+                response.Data = (await unitOfWork.CallReason.GetAll()).OrderBy(x => x.Order).ToList();
                 return response;
             }
             catch (Exception ex)

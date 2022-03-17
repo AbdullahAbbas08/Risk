@@ -1,4 +1,5 @@
-﻿using Risk_Domain_Layer.DTO_S.CallReason;
+﻿using Risk_Business_Layer.Business_Logic.Interfaces;
+using Risk_Domain_Layer.DTO_S.CallReason;
 
 namespace Risk.Controllers
 {
@@ -9,7 +10,7 @@ namespace Risk.Controllers
     {
         private readonly ICallReasonBusiness<CallReason> callReasonBusiness;
 
-        public CallReasonController(ICallReasonBusiness<CallReason> callReasonBusiness)
+        public CallReasonController(ICallReasonBusiness<CallReason> callReasonBusiness )
         {
             this.callReasonBusiness = callReasonBusiness;
         }
@@ -33,7 +34,7 @@ namespace Risk.Controllers
                 #endregion
 
                 #region Call Service
-                var callReasons = await callReasonBusiness.GetAll();
+               GeneralResponse = await callReasonBusiness.GetAll();
                 #endregion
 
                 #region return 
@@ -88,7 +89,9 @@ namespace Risk.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException);
             }
-        }
+        } 
+        
+   
 
         /// <summary>
         /// API For Delete An Existing CallReason

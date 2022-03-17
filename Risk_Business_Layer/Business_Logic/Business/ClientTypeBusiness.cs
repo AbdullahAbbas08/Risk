@@ -1,18 +1,19 @@
 ﻿using Risk_Business_Layer.IBusiness_Logic.Interfaces;
+using Risk_Data_Access_Layer;
 using Risk_Domain_Layer.DTO_S.ClientType;
 
 namespace Risk_Business_Layer.Repositories.Crud
 {
-    public class ClientTypeBusiness : IClientTypeBusiness<ClientType>
+    public class ClientTypeBusiness : Crud<ClientType>, IClientTypeBusiness<ClientType>
     {
         private readonly IUnitOfWork_Crud unitOfWork;
 
-        public ClientTypeBusiness(IUnitOfWork_Crud unitOfWork)
+        public ClientTypeBusiness(IUnitOfWork_Crud unitOfWork, RiskDbContext riskDbContext):base(riskDbContext)
         {
             this.unitOfWork = unitOfWork;
         }
 
-        public async Task<GeneralResponseSingleObject<ClientType>> AddAsync(AddClientTypeDto model) 
+        public async Task<GeneralResponseSingleObject<ClientType>> AddClientType(AddClientTypeDto model) 
         {
             try
             {
@@ -39,7 +40,7 @@ namespace Risk_Business_Layer.Repositories.Crud
             }
         }
 
-        public async Task<GeneralResponseSingleObject<ClientType>> DeleteAsync(int id)
+        public async Task<GeneralResponseSingleObject<ClientType>> DeleteClientType(int id)
         {
             try
             {
@@ -63,13 +64,24 @@ namespace Risk_Business_Layer.Repositories.Crud
             }
         }
 
-        public async Task<GeneralResponse<ClientType>> GetAll()
+        public async Task<GeneralResponse<ClientType>> GetAllClientType(int? id)
         {
             try 
             {
                 GeneralResponse<ClientType> response = new GeneralResponse<ClientType>();
 
-                response.Data =  (await unitOfWork.ClientType.GetAll()).ToList();
+                if(id !=null)
+                {
+                    var clientCall = (await unitOfWork.CallReasonClientType.Find(x => x.CallReasonId == id)).ToList();
+                    var clientTypes = clientCall.Select(x => x.ClientTypeId).ToList();
+                    response.Data = (await unitOfWork.ClientType.Find(x => clientTypes.Contains(x.TypeId))).ToList();
+
+                }
+                else
+                {
+                    response.Data = (await unitOfWork.ClientType.GetAll()).ToList();
+
+                }
                 response.Message = "Successffully";
                 return response;
             }
@@ -79,7 +91,7 @@ namespace Risk_Business_Layer.Repositories.Crud
             }
         }
 
-        public async Task<GeneralResponseSingleObject<ClientType>> UpdateAsync(int id, ClientType model)
+        public async Task<GeneralResponseSingleObject<ClientType>> UpdateClientType(int id, ClientType model)
         {
             try
             {
@@ -107,4 +119,4 @@ namespace Risk_Business_Layer.Repositories.Crud
             }
         }
     }
-}
+} 

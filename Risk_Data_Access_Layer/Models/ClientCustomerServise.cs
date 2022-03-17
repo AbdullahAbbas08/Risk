@@ -8,10 +8,20 @@ namespace Risk_Data_Access_Layer.Models
 {
     public class ClientCustomerServise
     {
+        public int Id { get; set; } 
         public string ClientId { get; set; }
 
         public string CustomerId { get; set; } 
-    }
+
+        
+        [ForeignKey("ClientId")]
+        public virtual Client Client { get; set; }
+
+        
+        [ForeignKey("CustomerId")]
+        public virtual Employee Customer { get; set; }
+    } 
+
 }
 
  

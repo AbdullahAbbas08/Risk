@@ -6,7 +6,7 @@ namespace Risk_Business_Layer.Seeds
 {
     public static class DefaultUsers  
     {
-        public static async Task SeedAdminUser(UserManager<Employee> UserManager, RoleManager<IdentityRole> roleManager)
+        public static async Task SeedAdminUser(UserManager<ApplicationUser> UserManager, RoleManager<IdentityRole> roleManager)
         {
             var DefaultUser = new Employee
             {
@@ -35,7 +35,7 @@ namespace Risk_Business_Layer.Seeds
             await roleManager.SeedClaimsForAdmin();
         }
 
-        public static async Task SeedAgentUser(UserManager<Employee> UserManager)
+        public static async Task SeedAgentUser(UserManager<ApplicationUser> UserManager)
         {
             var DefaultUser = new Employee
             {

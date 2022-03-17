@@ -1,4 +1,6 @@
-﻿using Risk_Domain_Layer.DTO_S.ClientType;
+﻿using Risk_Business_Layer.IUnitOfWork.IUnitOfWork_Crud;
+using Risk_Domain_Layer.DTO_S;
+using Risk_Domain_Layer.DTO_S.ClientType;
 
 namespace Risk.Controllers
 {
@@ -7,10 +9,12 @@ namespace Risk.Controllers
     public class ClientTypeController : ControllerBase
     {
         private readonly IClientTypeBusiness<ClientType> clientTypeBusiness;
+        private readonly IUnitOfWork_Crud unitOfWork;
 
-        public ClientTypeController(IClientTypeBusiness<ClientType> clientTypeBusiness)
+        public ClientTypeController(IClientTypeBusiness<ClientType> clientTypeBusiness , IUnitOfWork_Crud unitOfWork )
         {
             this.clientTypeBusiness = clientTypeBusiness;
+            this.unitOfWork = unitOfWork;
         }
 
         /// <summary>
@@ -25,7 +29,7 @@ namespace Risk.Controllers
         {
             try
             {
-                return await clientTypeBusiness.AddAsync(clientType);
+                return await clientTypeBusiness.AddClientType(clientType);
             }
 
             catch (Exception ex)
@@ -41,18 +45,21 @@ namespace Risk.Controllers
         /// <returns></returns>
         // GET: api/ClientType/5
         [HttpGet]
-        public async Task<ActionResult<GeneralResponse<ClientType>>> GetClientType()
+        public async Task<ActionResult<GeneralResponse<ClientType>>> GetClientType(int? id)
         {
             try
             {
-               return await clientTypeBusiness.GetAll(); 
+               
+               return await clientTypeBusiness.GetAllClientType(id); 
             }
             catch (Exception ex) 
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,ex.InnerException); 
             }
 
-        }
+        }    
+        
+
 
 
         /// <summary>
@@ -66,7 +73,7 @@ namespace Risk.Controllers
         {
             try
             {
-               return await clientTypeBusiness.UpdateAsync(id, new ClientType { Title = model.Title});
+               return await clientTypeBusiness.UpdateClientType(id, new ClientType { Title = model.Title});
             }
 
             catch (Exception ex)
@@ -87,7 +94,7 @@ namespace Risk.Controllers
         {
             try
             {
-              return  await clientTypeBusiness.DeleteAsync(id);
+              return  await clientTypeBusiness.DeleteClientType(id);
             }
 
             catch (Exception ex) 

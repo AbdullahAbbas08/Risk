@@ -22,36 +22,6 @@ namespace Risk_Data_Access_Layer.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("CallReasonClientType", b =>
-                {
-                    b.Property<int>("CallReasonsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ClientTypeTypeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CallReasonsId", "ClientTypeTypeId");
-
-                    b.HasIndex("ClientTypeTypeId");
-
-                    b.ToTable("CallReasonClientType", "dbo");
-                });
-
-            modelBuilder.Entity("ClientCustomerServise", b =>
-                {
-                    b.Property<string>("ClientId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CustomerId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("ClientId", "CustomerId");
-
-                    b.HasIndex("CustomerId");
-
-                    b.ToTable("ClientCustomerServise", "dbo");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -407,6 +377,29 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.ToTable("CallReasons", "dbo");
                 });
 
+            modelBuilder.Entity("Risk_Data_Access_Layer.Models.CallReasonClientType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CallReasonId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ClientTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CallReasonId");
+
+                    b.HasIndex("ClientTypeId");
+
+                    b.ToTable("CallReasonClientType");
+                });
+
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.City", b =>
                 {
                     b.Property<int>("Id")
@@ -431,13 +424,25 @@ namespace Risk_Data_Access_Layer.Migrations
 
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.ClientCustomerServise", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
                     b.Property<string>("ClientId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CustomerId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("ClientId", "CustomerId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("ClientCustomerServise");
                 });
@@ -570,43 +575,6 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.ToTable("Employees", "dbo");
                 });
 
-            modelBuilder.Entity("Risk_Data_Access_Layer.Models.CustomerServise", b =>
-                {
-                    b.HasBaseType("Risk_Data_Access_Layer.Models.Employee");
-
-                    b.ToTable("CustomerServise", "dbo");
-                });
-
-            modelBuilder.Entity("CallReasonClientType", b =>
-                {
-                    b.HasOne("Risk_Data_Access_Layer.Models.CallReason", null)
-                        .WithMany()
-                        .HasForeignKey("CallReasonsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Risk_Data_Access_Layer.Models.ClientType", null)
-                        .WithMany()
-                        .HasForeignKey("ClientTypeTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ClientCustomerServise", b =>
-                {
-                    b.HasOne("Risk_Data_Access_Layer.Models.Client", null)
-                        .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Risk_Data_Access_Layer.Models.CustomerServise", null)
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -696,6 +664,25 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.Navigation("SourceMarketing");
                 });
 
+            modelBuilder.Entity("Risk_Data_Access_Layer.Models.CallReasonClientType", b =>
+                {
+                    b.HasOne("Risk_Data_Access_Layer.Models.CallReason", "CallReason")
+                        .WithMany()
+                        .HasForeignKey("CallReasonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Risk_Data_Access_Layer.Models.ClientType", "clientType")
+                        .WithMany()
+                        .HasForeignKey("ClientTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CallReason");
+
+                    b.Navigation("clientType");
+                });
+
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.City", b =>
                 {
                     b.HasOne("Risk_Data_Access_Layer.Models.Governorate", "Governorate")
@@ -705,6 +692,25 @@ namespace Risk_Data_Access_Layer.Migrations
                         .IsRequired();
 
                     b.Navigation("Governorate");
+                });
+
+            modelBuilder.Entity("Risk_Data_Access_Layer.Models.ClientCustomerServise", b =>
+                {
+                    b.HasOne("Risk_Data_Access_Layer.Models.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Risk_Data_Access_Layer.Models.Employee", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.Client", b =>
@@ -762,15 +768,6 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.HasOne("Risk_Data_Access_Layer.Models.ApplicationUser", null)
                         .WithOne()
                         .HasForeignKey("Risk_Data_Access_Layer.Models.Employee", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Risk_Data_Access_Layer.Models.CustomerServise", b =>
-                {
-                    b.HasOne("Risk_Data_Access_Layer.Models.Employee", null)
-                        .WithOne()
-                        .HasForeignKey("Risk_Data_Access_Layer.Models.CustomerServise", "Id")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });

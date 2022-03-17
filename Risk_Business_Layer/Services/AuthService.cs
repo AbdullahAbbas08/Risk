@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Risk_Business_Layer.Helpers;
 using Risk_Business_Layer.IRepositories.IClient;
+using Risk_Business_Layer.IRepositories.ICustomerService;
 using Risk_Business_Layer.IRepositories.IEmployee;
 using Risk_Business_Layer.Services.Authentication;
 using Risk_Business_Layer.Services.AuthenticationModels;
@@ -19,21 +20,24 @@ namespace Risk_Business_Layer.Services
         private readonly IUnitOfWork_Crud unitOfWork;
         private readonly IEmployeeRepo employeeRepo;
         private readonly IClient clientRepo;
+        private readonly ICustomerService customerService;
         private readonly Helper helper;
         private readonly JWT _jwt;
         public AuthService(UserManager<ApplicationUser> userManager,
                             RoleManager<IdentityRole> roleManager,
                             IOptions<JWT> jwt,
                             IUnitOfWork_Crud unitOfWork,
-                            IOptions<Helper> _helper ,
+                            IOptions<Helper> _helper,
                             IEmployeeRepo EmployeeRepo,
-                            IClient clientRepo)
+                            IClient clientRepo,
+                            ICustomerService customerService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             this.unitOfWork = unitOfWork;
             employeeRepo = EmployeeRepo;
             this.clientRepo = clientRepo;
+            this.customerService = customerService;
             helper = _helper.Value;
             _jwt = jwt.Value;
         }
@@ -42,20 +46,20 @@ namespace Risk_Business_Layer.Services
         {
             Client user = new Client();
             #region model Validation
-            string ValidateModel ="" ;
+            string ValidateModel = "";
 
             if (await _userManager.FindByNameAsync(model.UserName) is not null)
-                ValidateModel = "User Name is already registered" ;
+                ValidateModel = "User Name is already registered";
 
             if (string.IsNullOrEmpty(model.Address))
                 ValidateModel += " , Address Cannot be Empty";
-               
 
-            if (model.Logo == null && model.LogoPath ==null)
-                ValidateModel += " , Logo Image Cannot be Empty" ;
+
+            if (model.Logo == null && model.LogoPath == null)
+                ValidateModel += " , Logo Image Cannot be Empty";
 
             if ((model.Mobile).Length < 11)
-                ValidateModel += " , Mobile Number Invalid " ;
+                ValidateModel += " , Mobile Number Invalid ";
 
             var city = await unitOfWork.City.Find(x => x.Id == model.CityId);
             if (city.Count() == 0)
@@ -74,7 +78,7 @@ namespace Risk_Business_Layer.Services
             #endregion
 
             #region Fill Client To Insert
-            if(model.LogoPath == null && model.Logo != null)
+            if (model.LogoPath == null && model.Logo != null)
             {
                 user.UserName = model.UserName;
                 user.Address = model.Address;
@@ -83,9 +87,9 @@ namespace Risk_Business_Layer.Services
                 user.CityId = model.CityId;
                 user.ClientTypeId = model.ClientTypeId;
                 user.LogoPath = helper.UploadImage(model.Logo);
-            } 
-            
-            if(model.LogoPath != null && model.Logo == null)
+            }
+
+            if (model.LogoPath != null && model.Logo == null)
             {
                 user.UserName = model.UserName;
                 user.Address = model.Address;
@@ -95,8 +99,8 @@ namespace Risk_Business_Layer.Services
                 user.ClientTypeId = model.ClientTypeId;
                 user.LogoPath = model.LogoPath;
             }
-            
-            if(model.LogoPath != null && model.Logo != null)
+
+            if (model.LogoPath != null && model.Logo != null)
             {
                 user.UserName = model.UserName;
                 user.Address = model.Address;
@@ -104,7 +108,7 @@ namespace Risk_Business_Layer.Services
                 user.Name = model.Name;
                 user.CityId = model.CityId;
                 user.ClientTypeId = model.ClientTypeId;
-                user.LogoPath =helper.UploadImage(model.Logo);
+                user.LogoPath = helper.UploadImage(model.Logo);
             }
             #endregion
 
@@ -118,7 +122,7 @@ namespace Risk_Business_Layer.Services
                 foreach (var error in result.Errors)
                     errors += $"{error.Description},";
 
-                return new CreatedUser { Message = errors  };
+                return new CreatedUser { Message = errors };
             }
             #endregion
 
@@ -151,29 +155,26 @@ namespace Risk_Business_Layer.Services
 
             if (employee != null)
             {
-                employee.
-                employeeRepo.DeleteEmployee(model.Id);
-               var res =  await RegisterEmployee(new RegisterEmployeeModel { 
-                    Address=model.Address,
-                    Mobile=model.Mobile,
-                    Name=model.Name,
-                    NationalId=model.NationalId,
-                    UserName=model.UserName,
-                    Password=model.password ,
-                    Role = model.Role
-               });
-
-                if(res.IsAuthenticated)
-                response.Message = "تم تعديل بيانات الموظف بنجاح";
-                else
+                try
+                {
+                    employee.Address = model.Address;
+                    employee.Mobile = model.Mobile;
+                    employee.NationalId = model.NationalId;
+                    employee.Name = model.Name;
+                    employee.UserName = model.UserName;
+                    if(model.password !="")
+                    employee.PasswordHash = _userManager.PasswordHasher.HashPassword(employee, model.password);
+                    var result = await _userManager.UpdateAsync(employee);
+                    response.Message = "تم تعديل بيانات الموظف بنجاح";
+                }
+                catch
                 {
                     response.Message = "حدث خطأ ما برجاء المحاولة مرة أخرى";
-                    response.Data = model;
                 }
 
             }
             else
-            response.Message = "لا توجد بيانات لهذا الكود";
+                response.Message = "لا توجد بيانات لهذا الكود";
 
             return response;
         }
@@ -183,37 +184,32 @@ namespace Risk_Business_Layer.Services
             GeneralResponseSingleObject<UpdateClientModel> response = new GeneralResponseSingleObject<UpdateClientModel>();
 
             var client = (await unitOfWork.Client.Find(x => x.Id == model.Id)).FirstOrDefault();
-
             if (client != null)
             {
-                clientRepo.DeleteUser(model.Id);
-                var res = await RegisterClient(new RegisterClientModel
+                try
                 {
-                   Address=model.Address,
-                   CityId=model.CityId,
-                   ClientTypeId=model.ClientTypeId,
-                   Mobile=model.Mobile,
-                   Name = model.Name,
-                   UserName=model.UserName,
-                   Logo = model.Logo,
-                   LogoPath=model.LogoPath,
-                   Password= model.Password
-                });
+                    client.Address = model.Address;
+                    client.CityId = model.CityId;
+                    client.ClientTypeId = model.ClientTypeId;
+                    client.Mobile = model.Mobile;
+                    client.Name = model.Name;
+                    client.UserName = model.UserName;
+                    client.Logo = model.Logo;
+                    client.LogoPath = model.LogoPath;
 
-                if (res.IsAuthenticated)
+                    if (model.Password != "")
+                        client.PasswordHash = _userManager.PasswordHasher.HashPassword(client, model.Password);
+                    var result = await _userManager.UpdateAsync(client);
                     response.Message = "تم تعديل بيانات العميل بنجاح";
-                else
+                }
+                catch
                 {
                     response.Message = "حدث خطأ ما برجاء المحاولة مرة أخرى";
-                    response.Data = model;
                 }
-
             }
             else
                 response.Message = "لا توجد بيانات لهذا الكود";
-
             return response;
-
         }
 
         public async Task<AuthModel> RegisterEmployee(RegisterEmployeeModel model)
@@ -236,12 +232,12 @@ namespace Risk_Business_Layer.Services
             if (!(Roles.Admin == model.Role || Roles.Agent == model.Role))
                 ValidateModel += " , Invalid Role ";
 
-            
+
 
 
             if (!string.IsNullOrEmpty(ValidateModel))
                 return new CreatedUser { Message = ValidateModel };
-           
+
             #endregion
 
             #region Fill Employee To Insert
@@ -287,12 +283,12 @@ namespace Risk_Business_Layer.Services
                 IsAuthenticated = true,
                 Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
                 Username = user.UserName,
-               ID_Created = user.Id
+                ID_Created = user.Id
             };
             #endregion
-        }       
+        }
 
-        public async Task<AuthModel> Login(TokenRequestModel model) 
+        public async Task<AuthModel> Login(TokenRequestModel model)
         {
             #region Generate Object typeOf AuthModel => If UserName & Passowrd : True || Login Successfully
             var authModel = new AuthModel();
