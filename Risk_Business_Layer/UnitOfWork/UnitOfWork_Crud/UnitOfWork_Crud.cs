@@ -50,6 +50,9 @@ namespace Risk_Business_Layer.UnitOfWork.UnitOfWork_Crud
         
         private ICrud<CallReasonClientType> _CallReasonClientType;
         public ICrud<CallReasonClientType> CallReasonClientType { get { if (_CallReasonClientType == null) { _CallReasonClientType = new Crud<CallReasonClientType>(riskDbContext); } return _CallReasonClientType; } }
+        
+        private ICrud<CustomerPhones> _CustomerPhones;
+        public ICrud<CustomerPhones> CustomerPhones { get { if (_CustomerPhones == null) { _CustomerPhones = new Crud<CustomerPhones>(riskDbContext); } return _CustomerPhones; } }
 
         public async Task SaveChangesAsync()
         {

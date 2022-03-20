@@ -31,9 +31,9 @@ namespace Risk.Controllers
         }
 
         [HttpGet]
-        public GeneralResponse<Client_Name_Id> GetCustomerRelatedWithAgent(string id)
+        public GeneralResponse<Client_Name_Id> GetCustomerRelatedWithAgent(string Toaken)
         {
-            return customerService.GetCustomerRelatedWithAgent(id);
+            return customerService.GetCustomerRelatedWithAgent(Toaken);
         }
 
     }

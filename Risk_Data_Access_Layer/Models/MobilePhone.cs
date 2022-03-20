@@ -11,5 +11,11 @@
         [Column(TypeName ="varchar(11)")]
         [MaxLength(11)]
         public string Mobile { get; set; }
+
+
+        public string CustomerId { get; set; }
+
+        [ForeignKey("CustomerId")]
+        public virtual Customer Customer { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Risk_Data_Access_Layer;
 
@@ -11,9 +12,10 @@ using Risk_Data_Access_Layer;
 namespace Risk_Data_Access_Layer.Migrations
 {
     [DbContext(typeof(RiskDbContext))]
-    partial class RiskDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220320122439_AddCustomerPhone")]
+    partial class AddCustomerPhone
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,6 +113,9 @@ namespace Risk_Data_Access_Layer.Migrations
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -461,6 +466,30 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.ToTable("ClientTypes", "dbo");
                 });
 
+            modelBuilder.Entity("Risk_Data_Access_Layer.Models.CustomerPhones", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("MobileId")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("MobileId");
+
+                    b.ToTable("CustomerPhones");
+                });
+
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.Governorate", b =>
                 {
                     b.Property<int>("Id")
@@ -486,18 +515,12 @@ namespace Risk_Data_Access_Layer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Mobile")
                         .IsRequired()
                         .HasMaxLength(11)
                         .HasColumnType("varchar(11)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
 
                     b.ToTable("MobilePhones", "dbo");
                 });
@@ -556,7 +579,12 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.Property<byte>("Gender")
                         .HasColumnType("tinyint");
 
+                    b.Property<int>("MobileId")
+                        .HasColumnType("int");
+
                     b.HasIndex("CityId");
+
+                    b.HasIndex("MobileId");
 
                     b.ToTable("Customers", "dbo");
                 });
@@ -711,7 +739,7 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("Risk_Data_Access_Layer.Models.MobilePhone", b =>
+            modelBuilder.Entity("Risk_Data_Access_Layer.Models.CustomerPhones", b =>
                 {
                     b.HasOne("Risk_Data_Access_Layer.Models.Customer", "Customer")
                         .WithMany()
@@ -719,7 +747,15 @@ namespace Risk_Data_Access_Layer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Risk_Data_Access_Layer.Models.MobilePhone", "MobilePhone")
+                        .WithMany()
+                        .HasForeignKey("MobileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Customer");
+
+                    b.Navigation("MobilePhone");
                 });
 
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.Client", b =>
@@ -761,7 +797,15 @@ namespace Risk_Data_Access_Layer.Migrations
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
+                    b.HasOne("Risk_Data_Access_Layer.Models.MobilePhone", "MobilePhone")
+                        .WithMany()
+                        .HasForeignKey("MobileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("City");
+
+                    b.Navigation("MobilePhone");
                 });
 
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.Employee", b =>

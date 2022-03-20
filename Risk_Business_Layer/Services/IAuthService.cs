@@ -11,6 +11,7 @@ namespace Risk_Business_Layer.Services
         Task<string> AddRoleAsync(AddRoleModel model);
         Task<GeneralResponseSingleObject<UpdateEmployee>> UpdateEmployee(UpdateEmployee model);
         Task<GeneralResponseSingleObject<UpdateClientModel>> UpdateClient(UpdateClientModel Entity);
+        Task<GeneralResponseSingleObject<string>> RegisterCustomer(RegisterCustomerModel model);
 
     }
 } 

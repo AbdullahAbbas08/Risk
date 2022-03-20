@@ -20,6 +20,7 @@
         public DbSet<AgentClient> AgentClients { get; set; }   
         public DbSet<ClientCustomerServise> ClientCustomerServise { get; set; }      
         public DbSet<CallReasonClientType> CallReasonClientType { get; set; }       
+        //public DbSet<CustomerPhones> CustomerPhones { get; set; }        
          
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -38,7 +39,10 @@
             //Remove Column Exist In Identity
             builder.Entity<IdentityUser>()
                 .Ignore(e => e.Email)
-                .Ignore(e => e.EmailConfirmed);
+                .Ignore(e => e.EmailConfirmed)
+                .Ignore(e => e.UserName); 
+            
+           
 
             //Change Table Name && Remove Column Exist In Identity
             //builder.Entity<IdentityUser>()

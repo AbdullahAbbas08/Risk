@@ -17,6 +17,7 @@ namespace Risk_Business_Layer.IUnitOfWork.IUnitOfWork_Crud
         ICrud<SourceMarketing> SourceMarketing  { get; }
         ICrud<ClientCustomerServise> ClientCustomerServise { get; }
         ICrud<CallReasonClientType> CallReasonClientType { get; }
+        ICrud<CustomerPhones> CustomerPhones  { get; }
         IClient client { get; }
         Task SaveChangesAsync(); 
     } 

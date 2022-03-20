@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Risk_Business_Layer.Helpers;
@@ -162,8 +163,8 @@ namespace Risk_Business_Layer.Services
                     employee.NationalId = model.NationalId;
                     employee.Name = model.Name;
                     employee.UserName = model.UserName;
-                    if(model.password !="")
-                    employee.PasswordHash = _userManager.PasswordHasher.HashPassword(employee, model.password);
+                    if (model.password != "")
+                        employee.PasswordHash = _userManager.PasswordHasher.HashPassword(employee, model.password);
                     var result = await _userManager.UpdateAsync(employee);
                     response.Message = "تم تعديل بيانات الموظف بنجاح";
                 }
@@ -288,6 +289,87 @@ namespace Risk_Business_Layer.Services
             #endregion
         }
 
+
+        public async Task<GeneralResponseSingleObject<string>> RegisterCustomer(RegisterCustomerModel model)
+        {
+            try
+            {
+                #region model Validation
+                string ValidateModel = "";
+
+                if (string.IsNullOrEmpty(model.Address))
+                    ValidateModel += " , يجب إضافة عنوان العميل";
+
+                if (model.CityId == 0)
+                    ValidateModel += " , يجب إضافة مدينة العميل";
+
+                if (!(model.Gender == 0 || model.Gender == 1))
+                    ValidateModel += " , يجب تحديد نوع العميل ";
+
+
+                if (!string.IsNullOrEmpty(ValidateModel))
+                    return new GeneralResponseSingleObject<string> { Message = ValidateModel };
+
+                #endregion
+
+                #region Fill Customer To Insert
+                var user = new Customer
+                {
+                    Name = model.Name,
+                    CityId = model.CityId,
+                    Gender = model.Gender,
+                    DateOfBirth = model.DateOfBirth,
+                    Address = model.Address,
+                    UserName = "Customer" + Guid.NewGuid().ToString(),
+                    Mobile = model.MobileNumber
+
+                };
+                #endregion
+
+                #region Create Customer 
+                var result = await _userManager.CreateAsync(user);
+
+                if (!result.Succeeded)
+                {
+                    var errors = string.Empty;
+
+                    foreach (var error in result.Errors)
+                        errors += $"{error.Description},";
+
+                    return new GeneralResponseSingleObject<string> { Message= errors };
+                }
+                #endregion
+
+                #region Assign Default Role To Client
+                ApplicationUser ReturenCustomer = await _userManager.FindByIdAsync(user.Id);
+                await _userManager.AddToRoleAsync(ReturenCustomer, Roles.Customer);
+                #endregion
+
+                #region Create Toaken
+                //var jwtSecurityToken = await CreateJwtToken(user);
+                #endregion
+
+
+
+                #region return Authentication Model 
+                return new GeneralResponseSingleObject<string> { Message = "تم إضافة العميل بنجاح"  , Data = ReturenCustomer.Id } ;
+                //    new CreatedUser
+                //{
+                //    ExpiresOn = jwtSecurityToken.ValidTo,
+                //    IsAuthenticated = true,
+                //    Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+                //    Username = user.UserName,
+                //    ID_Created = user.Id
+                //};
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                throw ex.InnerException;
+            }
+            
+        }
+
         public async Task<AuthModel> Login(TokenRequestModel model)
         {
             #region Generate Object typeOf AuthModel => If UserName & Passowrd : True || Login Successfully
@@ -309,12 +391,14 @@ namespace Risk_Business_Layer.Services
             #region Create Toaken
             var jwtSecurityToken = await CreateJwtToken(user);
             #endregion
+            var roles = await _userManager.GetRolesAsync(user);
 
             #region Prepare Returned Object
             authModel.IsAuthenticated = true;
             authModel.Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
             authModel.Username = user.UserName;
             authModel.ExpiresOn = jwtSecurityToken.ValidTo;
+            authModel.Role = roles[0].ToString();
             #endregion
 
             #region return Object typeOf AuthModel
@@ -358,5 +442,47 @@ namespace Risk_Business_Layer.Services
             throw new NotImplementedException();
         }
 
+        public static string GetPrincipal(string token, IConfiguration _configuration)
+        {
+            try
+            {
+
+                var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["JWT:Key"]));
+
+                SecurityToken tokenValidated = null;
+                JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+                TokenValidationParameters validationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = signingKey,
+
+                    ValidateAudience = true,
+                    ValidAudience = _configuration["JWT:Audience"],
+
+                    ValidateIssuer = true,
+                    ValidIssuer = _configuration["JWT:Issuer"],
+
+                };
+                ClaimsPrincipal principal = handler.ValidateToken(token, validationParameters, out tokenValidated);
+                if (principal == null)
+                    return null;
+                ClaimsIdentity identity = null;
+                try
+                {
+                    identity = (ClaimsIdentity)principal.Identity;
+                }
+                catch (NullReferenceException)
+                {
+                    return null;
+                }
+                var userIdClaim = identity.Claims.ToList();
+                string userId = userIdClaim[2].Value;
+                return userId;
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
     }
 }

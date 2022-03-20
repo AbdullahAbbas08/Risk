@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Risk_Data_Access_Layer;
 
@@ -11,9 +12,10 @@ using Risk_Data_Access_Layer;
 namespace Risk_Data_Access_Layer.Migrations
 {
     [DbContext(typeof(RiskDbContext))]
-    partial class RiskDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220320134555_changes")]
+    partial class changes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -556,7 +558,14 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.Property<byte>("Gender")
                         .HasColumnType("tinyint");
 
+                    b.Property<int>("MobileId")
+                        .HasColumnType("int");
+
                     b.HasIndex("CityId");
+
+                    b.HasIndex("MobileId")
+                        .IsUnique()
+                        .HasFilter("[MobileId] IS NOT NULL");
 
                     b.ToTable("Customers", "dbo");
                 });
@@ -761,7 +770,15 @@ namespace Risk_Data_Access_Layer.Migrations
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
+                    b.HasOne("Risk_Data_Access_Layer.Models.MobilePhone", "MobilePhone")
+                        .WithOne()
+                        .HasForeignKey("Risk_Data_Access_Layer.Models.Customer", "MobileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("City");
+
+                    b.Navigation("MobilePhone");
                 });
 
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.Employee", b =>
