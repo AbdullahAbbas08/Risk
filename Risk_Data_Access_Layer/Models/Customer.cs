@@ -15,6 +15,12 @@
         [Required]
         public DateTime DateOfBirth { get; set; }
 
+        public string ClientId { get; set; }
+         
+        
+        [ForeignKey("ClientId")]
+        public Client Client { get; set; }
+
         //public int MobileId { get; set; }
 
         //[ForeignKey("MobileId")] 

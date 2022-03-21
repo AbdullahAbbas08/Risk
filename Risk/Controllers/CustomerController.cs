@@ -61,7 +61,7 @@ namespace Risk.Controllers
 
 
         [HttpGet("GetCustomer")]
-        public async Task<ActionResult<GeneralResponseSingleObject<Customer>>> GetCustomer(string id)
+        public async Task<ActionResult<GeneralResponseSingleObject<Customer>>> GetCustomer(string phone)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace Risk.Controllers
                 #endregion
 
                 #region Call Service
-                var data = (await unitOfWork.Customer.Find(x => x.Id == id)).SingleOrDefault();
+                var data = (await unitOfWork.Customer.Find(x => x.Mobile == phone)).FirstOrDefault();
                 GeneralResponse.Data = data;
                 #endregion
 

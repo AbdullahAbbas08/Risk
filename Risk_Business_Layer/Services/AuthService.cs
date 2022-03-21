@@ -321,8 +321,8 @@ namespace Risk_Business_Layer.Services
                     DateOfBirth = model.DateOfBirth,
                     Address = model.Address,
                     UserName = "Customer" + Guid.NewGuid().ToString(),
-                    Mobile = model.MobileNumber
-
+                    Mobile = model.MobileNumber,
+                    ClientId = model.clientId
                 };
                 #endregion
 

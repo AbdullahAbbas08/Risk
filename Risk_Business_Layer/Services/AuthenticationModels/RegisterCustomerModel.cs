@@ -19,6 +19,7 @@ namespace Risk_Business_Layer.Services.AuthenticationModels
         public DateTime DateOfBirth { get; set; }
 
         public string Address { get; set; }
+        public string clientId { get; set; }
 
     }
 }
