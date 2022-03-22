@@ -9,6 +9,7 @@ using Risk_Business_Layer.IRepositories.IEmployee;
 using Risk_Business_Layer.Services.Authentication;
 using Risk_Business_Layer.Services.AuthenticationModels;
 using Risk_Data_Access_Layer.Constants;
+using Risk_Domain_Layer.DTO_S.Client;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
@@ -79,8 +80,8 @@ namespace Risk_Business_Layer.Services
             #endregion
 
             #region Fill Client To Insert
-            if (model.LogoPath == null && model.Logo != null)
-            {
+            //if (model.LogoPath == null && model.Logo != null)
+            //{
                 user.UserName = model.UserName;
                 user.Address = model.Address;
                 user.Mobile = model.Mobile;
@@ -88,29 +89,29 @@ namespace Risk_Business_Layer.Services
                 user.CityId = model.CityId;
                 user.ClientTypeId = model.ClientTypeId;
                 user.LogoPath = helper.UploadImage(model.Logo);
-            }
+            //}
 
-            if (model.LogoPath != null && model.Logo == null)
-            {
-                user.UserName = model.UserName;
-                user.Address = model.Address;
-                user.Mobile = model.Mobile;
-                user.Name = model.Name;
-                user.CityId = model.CityId;
-                user.ClientTypeId = model.ClientTypeId;
-                user.LogoPath = model.LogoPath;
-            }
+            //if (model.LogoPath != null && model.Logo == null)
+            //{
+            //    user.UserName = model.UserName;
+            //    user.Address = model.Address;
+            //    user.Mobile = model.Mobile;
+            //    user.Name = model.Name;
+            //    user.CityId = model.CityId;
+            //    user.ClientTypeId = model.ClientTypeId;
+            //    user.LogoPath = model.LogoPath;
+            //}
 
-            if (model.LogoPath != null && model.Logo != null)
-            {
-                user.UserName = model.UserName;
-                user.Address = model.Address;
-                user.Mobile = model.Mobile;
-                user.Name = model.Name;
-                user.CityId = model.CityId;
-                user.ClientTypeId = model.ClientTypeId;
-                user.LogoPath = helper.UploadImage(model.Logo);
-            }
+            //if (model.LogoPath != null && model.Logo != null)
+            //{
+            //    user.UserName = model.UserName;
+            //    user.Address = model.Address;
+            //    user.Mobile = model.Mobile;
+            //    user.Name = model.Name;
+            //    user.CityId = model.CityId;
+            //    user.ClientTypeId = model.ClientTypeId;
+            //    user.LogoPath = helper.UploadImage(model.Logo);
+            //}
             #endregion
 
             #region Create Client 
@@ -180,7 +181,7 @@ namespace Risk_Business_Layer.Services
             return response;
         }
 
-        public async Task<GeneralResponseSingleObject<UpdateClientModel>> UpdateClient(UpdateClientModel model)
+        public async Task<GeneralResponseSingleObject<UpdateClientModel>> UpdateClient(UpdateClientDto model) 
         {
             GeneralResponseSingleObject<UpdateClientModel> response = new GeneralResponseSingleObject<UpdateClientModel>();
 
@@ -196,10 +197,14 @@ namespace Risk_Business_Layer.Services
                     client.Name = model.Name;
                     client.UserName = model.UserName;
                     client.Logo = model.Logo;
-                    client.LogoPath = model.LogoPath;
+                    if(client.Logo != null)
+                        client.LogoPath =helper.UploadImage( model.Logo);
+                    else
+                        client.LogoPath =model.LogoPath;
 
                     if (model.Password != "")
                         client.PasswordHash = _userManager.PasswordHasher.HashPassword(client, model.Password);
+
                     var result = await _userManager.UpdateAsync(client);
                     response.Message = "تم تعديل بيانات العميل بنجاح";
                 }

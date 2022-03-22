@@ -7,6 +7,7 @@ namespace Risk_Business_Layer.IUnitOfWork.IUnitOfWork_Crud
     public interface IUnitOfWork_Crud
     {
         ICrud<CallReason> CallReason { get; }
+        ICrud<Call> Call { get; }
         ICrud<City> City { get;  }
         ICrud<Governorate> Governorate { get; }
         ICrud<ClientType> ClientType { get; }

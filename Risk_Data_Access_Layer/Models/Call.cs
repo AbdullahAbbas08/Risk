@@ -29,17 +29,17 @@
         [Required]
         public DateTime CreationDate { get; set; } = DateTime.Now;
 
-        public DateTime Start { get; set; }
+        public string Start { get; set; }
 
-        public DateTime End { get; set; }
+        public string End { get; set; }
 
 
-        [ForeignKey("SourceMarketId")]
+        [ForeignKey("SourceMarketId"),JsonIgnore]
         public SourceMarketing SourceMarketing { get; set; }
 
         public int CallReasonId { get; set; }
 
-        [ForeignKey("CallReasonId")]
+        [ForeignKey("CallReasonId"), JsonIgnore]
         public CallReason CallReason { get; set; }
          
     }

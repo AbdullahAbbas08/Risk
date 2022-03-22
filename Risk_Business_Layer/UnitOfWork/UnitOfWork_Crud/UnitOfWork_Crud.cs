@@ -13,6 +13,9 @@ namespace Risk_Business_Layer.UnitOfWork.UnitOfWork_Crud
 
         private ICrud<CallReason> _CallReason; 
         public ICrud<CallReason> CallReason  {get {if(_CallReason == null){ _CallReason = new Crud<CallReason>(riskDbContext);}return _CallReason; } }
+        
+        private ICrud<Call> _Call; 
+        public ICrud<Call> Call  {get {if(_Call == null){ _Call = new Crud<Call>(riskDbContext);}return _Call; } }
 
 
         private ICrud<City> _City;

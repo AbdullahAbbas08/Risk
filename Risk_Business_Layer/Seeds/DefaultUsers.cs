@@ -10,12 +10,12 @@ namespace Risk_Business_Layer.Seeds
         {
             var DefaultUser = new Employee
             {
-                UserName = "abdullah250123",
-                Email = "abdullah2158123@gmail.com",
+                UserName = "admin250",
+                Email = "admin250@gmail.com",
                 EmailConfirmed = false,
-                Name = "abdullah",
+                Name = "المدير",
                 Address = "dummy address",
-                Mobile = "01280798145",
+                Mobile = "01006559199",
                 NationalId = "00000000000000"
             };
 
@@ -26,10 +26,10 @@ namespace Risk_Business_Layer.Seeds
                 //await UserManager.CreateAsync(DefaultUser);
                 await UserManager.AddToRolesAsync(DefaultUser, new List<string>
                 {
-                    Roles.Admin,
-                    Roles.Agent,
-                    Roles.Client,
-                    Roles.Customer
+                    Roles.Admin
+                    //Roles.Agent,
+                    //Roles.Client,
+                    //Roles.Customer
                 });
             }
             await roleManager.SeedClaimsForAdmin();

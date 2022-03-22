@@ -45,7 +45,7 @@ namespace Risk.Controllers
         }
         
         [HttpPut]
-        public async Task<ActionResult<GeneralResponseSingleObject<UpdateClientModel>>> Update([FromForm] UpdateClientModel model)
+        public async Task<ActionResult<GeneralResponseSingleObject<UpdateClientModel>>> Update([FromForm] UpdateClientDto model)
         {
             try
             {
