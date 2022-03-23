@@ -1,4 +1,5 @@
 ﻿using Risk_Business_Layer.Business_Logic.Interfaces;
+using Risk_Domain_Layer.DTO_S;
 using Risk_Domain_Layer.DTO_S.Client;
 using Risk_Domain_Layer.DTO_S.ClientCustomerService;
 
@@ -31,9 +32,15 @@ namespace Risk.Controllers
         }
 
         [HttpGet]
-        public GeneralResponse<Client_Name_Id> GetCustomerRelatedWithAgent(string Toaken)
+        public GeneralResponse<ClientDto> GetCustomerRelatedWithAgent(string Toaken)
         {
             return customerService.GetCustomerRelatedWithAgent(Toaken);
+        }
+        
+        [HttpGet("GetClientsRelatedWithAgent")]
+        public GeneralResponse<IdNameList> GetClientsRelatedWithAgent(string AgentID)
+        {
+            return customerService.GetClientsRelatedWithAgent(AgentID);
         }
 
     }

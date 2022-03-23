@@ -14,6 +14,4 @@
         public virtual CallReason CallReason { get; set; }
     }
 
-}
-
-  
+}  

@@ -19,6 +19,7 @@ using Risk_Business_Layer.Repositories.CustomerServices;
 using Risk_Business_Layer.IRepositories.ICustomer;
 using Risk_Business_Layer.Repositories.Customer;
 using Risk_Business_Layer.IBusiness_Logic.Interfaces;
+using Risk_Business_Layer.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +45,7 @@ builder.Services.AddTransient<ICustomerServiceBusiness, CustomerServiceBusiness>
 builder.Services.AddTransient<ICallReasonClientTypeBusiness, CallReasonClientTypeBusiness>();
 builder.Services.AddTransient<ICustomer, OuterCustomer>();
 builder.Services.AddTransient<ICallBusiness<Call>, CallBusiness>();
+builder.Services.AddTransient<ICityRepo, CityRepo>();
 builder.Services.AddScoped<IAuthService, AuthService>(); 
 #endregion
 

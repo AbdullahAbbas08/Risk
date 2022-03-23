@@ -1,4 +1,5 @@
-﻿using Risk_Domain_Layer.DTO_S.City;
+﻿using Risk_Business_Layer.IRepositories.IClient;
+using Risk_Domain_Layer.DTO_S.City;
 
 namespace Risk.Controllers
 {
@@ -7,10 +8,12 @@ namespace Risk.Controllers
     public class CityController : ControllerBase
     {
         private readonly ICityBusiness<City> cityBusiness;
+        private readonly ICityRepo cityRepo;
 
-        public CityController(ICityBusiness<City> cityBusiness)
+        public CityController(ICityBusiness<City> cityBusiness , ICityRepo cityRepo)
         {
             this.cityBusiness = cityBusiness;
+            this.cityRepo = cityRepo;
         }
 
         /// <summary>
@@ -43,7 +46,22 @@ namespace Risk.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-
+        }
+        
+        
+        [HttpGet("GetCitiesWithGovernorate")]
+        public async Task<ActionResult<GeneralResponse<City>>> GetCitiesWithGovernorate()
+        {
+            try
+            {
+                #region Call Service
+                return await cityRepo.GetCitiesWithGovernorate();
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
 

@@ -9,7 +9,7 @@ namespace Risk_Business_Layer.Repositories.Crud
     {
         private readonly IUnitOfWork_Crud unitOfWork;
 
-        public CityBusiness(IUnitOfWork_Crud unitOfWork)
+        public CityBusiness(IUnitOfWork_Crud unitOfWork )
         {
             this.unitOfWork = unitOfWork;
         }

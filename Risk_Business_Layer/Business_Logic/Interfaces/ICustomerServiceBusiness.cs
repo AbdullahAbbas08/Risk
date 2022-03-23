@@ -1,15 +1,13 @@
-﻿using Risk_Domain_Layer.DTO_S.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Risk_Domain_Layer.DTO_S;
+using Risk_Domain_Layer.DTO_S.ClientCustomerService;
 
 namespace Risk_Business_Layer.Business_Logic.Interfaces
 {
     public interface ICustomerServiceBusiness
     {
         Task AddRange(ClientCustomerServise model);
-        GeneralResponse<Client_Name_Id> GetCustomerRelatedWithAgent(string Id);
+        GeneralResponse<ClientDto> GetCustomerRelatedWithAgent(string Id);
+        GeneralResponse<IdNameList> GetClientsRelatedWithAgent(string Id);
     }
 }
+  

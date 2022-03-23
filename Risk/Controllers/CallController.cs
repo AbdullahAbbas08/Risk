@@ -93,7 +93,8 @@ namespace Risk.Controllers
                     Notes = model.Notes,
                     CallType = model.CallType,
                     Reason = model.Reason,
-                    Satisfy = model.Satisfy , 
+                    Satisfy = model.Satisfy ,
+                    customerId = model.customerId
                     });
             }
             catch (Exception ex)

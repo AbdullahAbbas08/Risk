@@ -49,6 +49,38 @@ namespace Risk.Controllers
 
         }
 
+
+        [HttpGet("GetReasonsRelatedWithClientType")]
+        public async Task<ActionResult<GeneralResponse<IdNameList_int_id>>> GetReasonsRelatedWithClientType(string ClientID)
+        {
+            try
+            {
+                GeneralResponse<IdNameList_int_id> response = new GeneralResponse<IdNameList_int_id>();
+                var ClientObj = (await unitOfWork.client.Find(x => x.Id == ClientID)).FirstOrDefault();
+                if (ClientObj != null)
+                {
+                    var query = unitOfWork.CallReasonClientType.Find(o => o.ClientTypeId == ClientObj.ClientTypeId).Result.ToList();
+                    var reasonsExist = query.Select(y => y.CallReasonId).ToList();
+                    var Filter = (await unitOfWork.CallReason.Find(x => reasonsExist.Contains(x.Id))).ToList();
+                    var res = (from item in Filter
+                               select new IdNameList_int_id
+                               {
+                                   Id = item.Id,
+                                   Name = item.Title
+                               }).ToList();
+                    response.Data = res;
+                    response.Message = "success";
+                }
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.InnerException);
+            }
+
+        }
+
         [HttpPost("CallReasonClientType")]
         public async Task<ActionResult> CallReasonClientType(List<CallReasonClientTypeDto> model)
         {

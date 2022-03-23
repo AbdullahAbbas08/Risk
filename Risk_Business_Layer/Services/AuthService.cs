@@ -202,7 +202,7 @@ namespace Risk_Business_Layer.Services
                     else
                         client.LogoPath =model.LogoPath;
 
-                    if (model.Password != "")
+                    if (model.Password != "*")
                         client.PasswordHash = _userManager.PasswordHasher.HashPassword(client, model.Password);
 
                     var result = await _userManager.UpdateAsync(client);
@@ -293,7 +293,6 @@ namespace Risk_Business_Layer.Services
             };
             #endregion
         }
-
 
         public async Task<GeneralResponseSingleObject<string>> RegisterCustomer(RegisterCustomerModel model)
         {

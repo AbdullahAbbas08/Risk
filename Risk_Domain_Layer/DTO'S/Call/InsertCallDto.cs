@@ -27,6 +27,7 @@ namespace Risk_Domain_Layer.DTO_S.Call
         public int CallType { get; set; }
 
         public int SourceMarketId { get; set; }
+        public string customerId { get; set; }
 
     }
 }

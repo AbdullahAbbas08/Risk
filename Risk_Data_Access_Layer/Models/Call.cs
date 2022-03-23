@@ -41,6 +41,14 @@
 
         [ForeignKey("CallReasonId"), JsonIgnore]
         public CallReason CallReason { get; set; }
-         
+
+
+        [Column(TypeName = "nvarchar(450)")]
+        public string customerId { get; set; }
+
+
+        [ForeignKey("customerId")]
+        public Customer customer { get; set; }
+
     }
 }
