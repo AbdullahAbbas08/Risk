@@ -15,6 +15,13 @@
         [Required]
         public DateTime DateOfBirth { get; set; }
 
+
+        [Column(TypeName = "varchar(11)"), MaxLength(11)]
+        public string Mobile2 { get; set; }
+
+        [Column(TypeName = "varchar(11)"), MaxLength(11)]
+        public string Phone { get; set; } 
+
         public string ClientId { get; set; }
          
         

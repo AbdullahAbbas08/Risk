@@ -11,8 +11,10 @@ namespace Risk_Business_Layer.Services.AuthenticationModels
         public string Name { get; set; }
 
         public string MobileNumber { get; set; }
+        public string MobileNumber2 { get; set; }
+        public string Phone { get; set; }
 
-        public int CityId { get; set; }
+        public int CityId { get; set; } 
 
         public int Gender { get; set; }
 

@@ -326,7 +326,9 @@ namespace Risk_Business_Layer.Services
                     Address = model.Address,
                     UserName = "Customer" + Guid.NewGuid().ToString(),
                     Mobile = model.MobileNumber,
-                    ClientId = model.clientId
+                    ClientId = model.clientId,
+                    Mobile2 = model.MobileNumber2,
+                    Phone = model.Phone,
                 };
                 #endregion
 
@@ -527,6 +529,8 @@ namespace Risk_Business_Layer.Services
                     Address = model.Address,
                     UserName = "Customer" + Guid.NewGuid().ToString(),
                     Mobile = model.MobileNumber,
+                    Mobile2 = model.MobileNumber2,
+                    Phone = model.Phone,
                 };
                 #endregion
 

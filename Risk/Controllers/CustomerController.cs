@@ -87,7 +87,7 @@ namespace Risk.Controllers
                 #endregion
 
                 #region Call Service
-                var data = (await unitOfWork.Customer.Find(x => x.Mobile == phone)).FirstOrDefault();
+                var data = (await unitOfWork.Customer.Find(x => x.Mobile == phone || x.Mobile2 == phone || x.Phone == phone)).FirstOrDefault();
                 GeneralResponse.Data = data;
                 #endregion
 
@@ -101,7 +101,6 @@ namespace Risk.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-
         }
         
         
