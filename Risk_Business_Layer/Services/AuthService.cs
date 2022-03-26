@@ -164,7 +164,7 @@ namespace Risk_Business_Layer.Services
                     employee.NationalId = model.NationalId;
                     employee.Name = model.Name;
                     employee.UserName = model.UserName;
-                    if (model.password != "")
+                    if (model.password != "***")
                         employee.PasswordHash = _userManager.PasswordHasher.HashPassword(employee, model.password);
                     var result = await _userManager.UpdateAsync(employee);
                     response.Message = "تم تعديل بيانات الموظف بنجاح";
@@ -486,6 +486,90 @@ namespace Risk_Business_Layer.Services
             catch (Exception ex)
             {
                 return ex.Message;
+            }
+        }
+
+        public async Task<GeneralResponseSingleObject<string>> UpdateCustomer(UpdateCustomerModel model)
+        {
+            try
+            {
+                var findCustomer = await _userManager.FindByIdAsync(model.CustomerId);
+
+                if( findCustomer == null )
+                    return new GeneralResponseSingleObject<string> { Message = "العميل غير مسجل بالنظام" };
+
+                #region model Validation
+                string ValidateModel = "";
+
+                if (string.IsNullOrEmpty(model.Address))
+                    ValidateModel += " , يجب إضافة عنوان العميل";
+
+                if (model.CityId == 0)
+                    ValidateModel += " , يجب إضافة مدينة العميل";
+
+                if (!(model.Gender == 0 || model.Gender == 1))
+                    ValidateModel += " , يجب تحديد نوع العميل ";
+
+
+                if (!string.IsNullOrEmpty(ValidateModel))
+                    return new GeneralResponseSingleObject<string> { Message = ValidateModel };
+
+                #endregion
+
+                #region Fill Customer To Insert
+                var user = new Customer
+                {
+                    Id = model.CustomerId,
+                    Name = model.Name,
+                    CityId = model.CityId,
+                    Gender = model.Gender,
+                    DateOfBirth = model.DateOfBirth,
+                    Address = model.Address,
+                    UserName = "Customer" + Guid.NewGuid().ToString(),
+                    Mobile = model.MobileNumber,
+                };
+                #endregion
+
+                #region Create Customer 
+                var result = await _userManager.UpdateAsync(user);
+
+                if (!result.Succeeded)
+                {
+                    var errors = string.Empty;
+
+                    foreach (var error in result.Errors)
+                        errors += $"{error.Description},";
+
+                    return new GeneralResponseSingleObject<string> { Message = errors };
+                }
+                #endregion
+
+                #region Assign Default Role To Client
+                ApplicationUser ReturenCustomer = await _userManager.FindByIdAsync(user.Id);
+                await _userManager.AddToRoleAsync(ReturenCustomer, Roles.Customer);
+                #endregion
+
+                #region Create Toaken
+                //var jwtSecurityToken = await CreateJwtToken(user);
+                #endregion
+
+
+
+                #region return Authentication Model 
+                return new GeneralResponseSingleObject<string> { Message = "تم إضافة العميل بنجاح", Data = ReturenCustomer.Id };
+                //    new CreatedUser
+                //{
+                //    ExpiresOn = jwtSecurityToken.ValidTo,
+                //    IsAuthenticated = true,
+                //    Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+                //    Username = user.UserName,
+                //    ID_Created = user.Id
+                //};
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                throw ex.InnerException;
             }
         }
     }

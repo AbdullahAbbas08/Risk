@@ -41,6 +41,23 @@ namespace Risk.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpPut]
+        public async Task<ActionResult<GeneralResponseSingleObject<string>>> UpdateCustomer(UpdateCustomerModel customer) 
+        {
+            try
+            {
+                #region Call Service
+                var res =  await authService.UpdateCustomer(customer);
+                return res;
+                #endregion
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
         
         
         [HttpPost("CustomerPhones")]

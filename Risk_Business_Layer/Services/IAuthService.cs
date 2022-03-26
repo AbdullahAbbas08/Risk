@@ -13,6 +13,7 @@ namespace Risk_Business_Layer.Services
         Task<GeneralResponseSingleObject<UpdateEmployee>> UpdateEmployee(UpdateEmployee model);
         Task<GeneralResponseSingleObject<UpdateClientModel>> UpdateClient(UpdateClientDto Entity);
         Task<GeneralResponseSingleObject<string>> RegisterCustomer(RegisterCustomerModel model);
+        Task<GeneralResponseSingleObject<string>> UpdateCustomer(UpdateCustomerModel model);
 
     }
 } 
