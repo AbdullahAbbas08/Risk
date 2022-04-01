@@ -1,6 +1,8 @@
 ﻿using Risk_Business_Layer.Business_Logic.Interfaces;
 using Risk_Business_Layer.IRepositories.ICustomerService;
+using Risk_Domain_Layer.DTO_S.Client;
 using Risk_Domain_Layer.DTO_S.ClientCustomerService;
+using Risk_Domain_Layer.DTO_S.Employee;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,6 +59,29 @@ namespace Risk_Business_Layer.Business_Logic.Business
                 throw ex.InnerException;
             }
            
+        }
+
+        public async Task<GeneralResponse<GetEmployeeDto>> GetAllAgentRelatedWithOneClient(string Id)
+        {
+            var CustomerSeriveClient = (await unitOfWork.ClientCustomerServise.Find(x => x.ClientId == Id)).Select(x=>x.CustomerId).ToList();
+            var CustomerService = (await unitOfWork.Employee.Find(x=> CustomerSeriveClient.Contains(x.Id))).ToList();
+
+            GeneralResponse<GetEmployeeDto> res = new GeneralResponse<GetEmployeeDto>();
+            List< GetEmployeeDto > List = new List< GetEmployeeDto >();
+            foreach (var agent in CustomerService)
+            {
+                List.Add(new GetEmployeeDto
+                {
+                    Name = agent.Name,
+                    Address = agent.Address,
+                    ID = agent.Id,
+                    Mobile = agent.Mobile,
+                    NationalId = agent.NationalId,
+                });
+            }
+            res.Data = List;
+
+            return res;
         }
     }
 }

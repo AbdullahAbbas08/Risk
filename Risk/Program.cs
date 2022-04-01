@@ -46,6 +46,7 @@ builder.Services.AddTransient<ICallReasonClientTypeBusiness, CallReasonClientTyp
 builder.Services.AddTransient<ICustomer, OuterCustomer>();
 builder.Services.AddTransient<ICallBusiness<Call>, CallBusiness>();
 builder.Services.AddTransient<ICityRepo, CityRepo>();
+builder.Services.AddTransient<IAdminBusiness, AdminBusiness>();
 builder.Services.AddScoped<IAuthService, AuthService>(); 
 #endregion
 

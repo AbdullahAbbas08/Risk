@@ -7,7 +7,10 @@ namespace Risk_Business_Layer.Business_Logic.Interfaces
     {
         Task AssignClientToAgent(Client Entity);
         Task<GeneralResponse<GetClientDto>> GetAll();
+        Task<GeneralResponse<GetClientDto>> FilterClientWithRelatedTitles(string? ClientName, string? Mobile, int? ClientType); 
+        Task<GeneralResponse<GetClientDto>> FilterClient();
         Task<GeneralResponse<IdNameList>> GetAllIdName();
         Task<GeneralResponseSingleObject<EmptyResponse>> DeleteClient(string ID);
     }
 }
+ 

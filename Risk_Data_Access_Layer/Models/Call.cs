@@ -29,9 +29,9 @@
         [Required]
         public DateTime CreationDate { get; set; } = DateTime.Now;
 
-        public string Start { get; set; }
+        public DateTime Start { get; set; }
 
-        public string End { get; set; }
+        public DateTime End { get; set; }
 
 
         [ForeignKey("SourceMarketId"),JsonIgnore]

@@ -2,6 +2,7 @@
 using Risk_Business_Layer.IUnitOfWork.IUnitOfWork_Crud;
 using Risk_Business_Layer.Services;
 using Risk_Business_Layer.Services.AuthenticationModels;
+using Risk_Domain_Layer.DTO_S;
 
 namespace Risk.Controllers
 {
@@ -87,8 +88,47 @@ namespace Risk.Controllers
                 #endregion
 
                 #region Call Service
+
                 var data = (await unitOfWork.Customer.Find(x => x.Mobile == phone || x.Mobile2 == phone || x.Phone == phone)).FirstOrDefault();
                 GeneralResponse.Data = data;
+                #endregion
+
+                #region return 
+                GeneralResponse.Message = "Successffully";
+                return Ok(GeneralResponse);
+                #endregion
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }   
+        
+        
+        [HttpGet("GetAllCustomer")]
+        public async Task<ActionResult<GeneralResponse<IdNameList>>> GetCustomer()
+        {
+            try
+            {
+                HttpClient client = new HttpClient();
+                //client.PostAsync("http://api.riskegypt.com/api/Governorate",new HttpContent { })
+                #region Generate Returned Object TypeOf GeneralResponse
+                GeneralResponse<IdNameList> GeneralResponse = new GeneralResponse<IdNameList>();
+                #endregion
+
+                #region Call Service
+
+                var data = (await unitOfWork.Customer.GetAll()).ToList();
+                foreach (var item in data)
+                {
+                    IdNameList idNameList = new IdNameList()
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                    };
+                    GeneralResponse.Data.Add(idNameList);
+                }
                 #endregion
 
                 #region return 

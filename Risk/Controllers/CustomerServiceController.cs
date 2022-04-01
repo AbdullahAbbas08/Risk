@@ -2,6 +2,7 @@
 using Risk_Domain_Layer.DTO_S;
 using Risk_Domain_Layer.DTO_S.Client;
 using Risk_Domain_Layer.DTO_S.ClientCustomerService;
+using Risk_Domain_Layer.DTO_S.Employee;
 
 namespace Risk.Controllers
 {
@@ -41,6 +42,13 @@ namespace Risk.Controllers
         public GeneralResponse<IdNameList> GetClientsRelatedWithAgent(string AgentID)
         {
             return customerService.GetClientsRelatedWithAgent(AgentID);
+        }
+        
+        
+        [HttpGet("GetAllAgentRelatedWithOneClient")]
+        public Task<GeneralResponse<GetEmployeeDto>> GetAllAgentRelatedWithOneClient(string id)
+        {
+            return clientCustomerServise.GetAllAgentRelatedWithOneClient(id);
         }
 
     }

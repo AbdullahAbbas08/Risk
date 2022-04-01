@@ -57,6 +57,50 @@ namespace Risk_Business_Layer.Repositories.Client
            }).ToListAsync();
 
             return Client;
+        } 
+
+        public async Task<IEnumerable<GetClientDto>> FilterClientWithRelatedTitles( string? ClientName , string? Mobile , int? ClientType)
+        {
+            var Query = await riskDbContext.Clients.Include(x => x.City).Include(x => x.ClientType).Select(x =>
+           new GetClientDto
+           {
+               CityTitle = x.City.Title,
+               ClientTypeTitle = x.ClientType.Title,
+               GovernorateTitle = x.City.Governorate.Title,
+               GovernorateId = x.City.Governorate.Id,
+               ClientId = x.Id,
+               Address = x.Address,
+               CityId = x.CityId,
+               ClientTypeId = x.ClientTypeId,
+               LogoPath = x.LogoPath,
+               Mobile = x.Mobile,
+               Name = x.Name,
+               UserName = x.UserName,
+               password = x.PasswordHash
+           }).ToListAsync();
+
+            var clients = (from item in Query
+                          where (item.Name == ClientName || ClientName is null) &&
+                                (item.Mobile == Mobile || Mobile is null) &&
+                                (item.ClientTypeId == ClientType || ClientType is null)
+                          select( new GetClientDto
+                               {
+                                   CityTitle =item.CityTitle,
+                                   ClientTypeTitle = item.ClientTypeTitle,
+                                   GovernorateTitle = item.GovernorateTitle,
+                                   GovernorateId = item.GovernorateId,
+                                   ClientId = item.ClientId,
+                                   Address = item.Address,
+                                   CityId = item.CityId,
+                                   ClientTypeId = item.ClientTypeId,
+                                   LogoPath = item.LogoPath,
+                                   Mobile = item.Mobile,
+                                   Name = item.Name,
+                                   UserName = item.UserName,
+                                   password = item.password
+                               })).ToList();
+
+            return clients;
         }
 
         public async Task<GeneralResponseSingleObject<Risk_Data_Access_Layer.Models.Client>> UpdateUser(UpdateClientModel model)
@@ -92,5 +136,7 @@ namespace Risk_Business_Layer.Repositories.Client
 
             return response ;
         }
+
+       
     }
 }

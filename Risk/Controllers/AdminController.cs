@@ -1,4 +1,5 @@
-﻿using Risk_Domain_Layer.DTO_S.AgentClient;
+﻿using Risk_Domain_Layer.DTO_S.Admin;
+using Risk_Domain_Layer.DTO_S.AgentClient;
 
 namespace Risk.Controllers
 {
@@ -7,13 +8,15 @@ namespace Risk.Controllers
     public class AdminController : ControllerBase
     {
         #region Decalre Variables
-        private readonly IAgentClientBusiness AgentClientBusiness; 
+        private readonly IAgentClientBusiness AgentClientBusiness;
+        private readonly IAdminBusiness adminBusiness;
         #endregion
 
         #region Constructor
-        public AdminController(IAgentClientBusiness agentClient)
+        public AdminController(IAgentClientBusiness agentClient , IAdminBusiness adminBusiness)
         {
             this.AgentClientBusiness = agentClient;
+            this.adminBusiness = adminBusiness;
         }
         #endregion
 
@@ -26,5 +29,11 @@ namespace Risk.Controllers
 
         }
         #endregion
+
+        [HttpPost("ClientCallReport")]
+        public async Task<GeneralResponse<ClientCallSearchResultReportDto>> ClientCallReport(ClientCallSearchInputReportDto model)
+        {
+            return await adminBusiness.ClientCallReport(model);
+        }
     }
 }

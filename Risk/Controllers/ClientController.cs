@@ -25,6 +25,13 @@ namespace Risk.Controllers
             return await clientBusiness.GetAll();
         }
         
+
+        [HttpGet("FilterWithRelatedTitles")]
+        public async Task<ActionResult<GeneralResponse<GetClientDto>>> FilterClientWithRelatedTitles(string? ClientName, string? Mobile, int? ClientType)
+        {
+            return await clientBusiness.FilterClientWithRelatedTitles(ClientName, Mobile,ClientType);
+        } 
+        
         [HttpGet("GetAllIdName")]
         public async Task<ActionResult<GeneralResponse<IdNameList>>> GetAllIdName()
         {

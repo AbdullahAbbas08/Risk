@@ -34,6 +34,8 @@ namespace Risk_Business_Layer.Business_Logic.Business
             return response;
         }
 
+       
+
         public async Task<GeneralResponse<GetClientDto>> GetAll()
         {
             GeneralResponse<GetClientDto> response = new GeneralResponse<GetClientDto>();
@@ -41,7 +43,15 @@ namespace Risk_Business_Layer.Business_Logic.Business
             response.Message = "data returned Successfully";
             return response;
         }
-        
+        public async Task<GeneralResponse<GetClientDto>> FilterClient()
+        {
+            GeneralResponse<GetClientDto> response = new GeneralResponse<GetClientDto>();
+
+            response.Data = (await unitOfWork.GetAllWithRelatedTitles()).ToList();
+            response.Message = "data returned Successfully";
+            return response;
+        }
+
         public async Task<GeneralResponse<IdNameList>> GetAllIdName()
         {
             GeneralResponse<IdNameList> response = new GeneralResponse<IdNameList>();
@@ -55,5 +65,12 @@ namespace Risk_Business_Layer.Business_Logic.Business
             return response;
         }
 
+        public async Task<GeneralResponse<GetClientDto>> FilterClientWithRelatedTitles(string? ClientName, string? Mobile, int? ClientType)
+        {
+            GeneralResponse<GetClientDto> response = new GeneralResponse<GetClientDto>();
+            response.Data = (await unitOfWork.FilterClientWithRelatedTitles(ClientName , Mobile , ClientType)).ToList();
+            response.Message = "data returned Successfully";
+            return response;
+        }
     }
 }

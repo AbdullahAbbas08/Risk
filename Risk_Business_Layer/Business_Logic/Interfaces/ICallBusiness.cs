@@ -8,5 +8,6 @@
         Task DeleteAsync(int id);
         //Task<GeneralResponseSingleObject<T>> UpdateAsync(int id, CallReason callReason);
     }
+
 }
   
