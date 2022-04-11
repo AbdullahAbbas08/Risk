@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Risk_Data_Access_Layer;
 
@@ -11,9 +12,10 @@ using Risk_Data_Access_Layer;
 namespace Risk_Data_Access_Layer.Migrations
 {
     [DbContext(typeof(RiskDbContext))]
-    partial class RiskDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220402110029_change_start_end_date_call2")]
+    partial class change_start_end_date_call2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -198,6 +200,31 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Risk_Data_Access_Layer.Models.AgentClient", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("AgentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AgentId");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("AgentClients");
+                });
+
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -293,16 +320,8 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.Property<byte>("CallType")
                         .HasColumnType("tinyint");
 
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("CustomerServiceId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -335,10 +354,6 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CallReasonId");
-
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("CustomerServiceId");
 
                     b.HasIndex("SourceMarketId");
 
@@ -543,6 +558,10 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.Property<int>("CityId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
@@ -560,6 +579,8 @@ namespace Risk_Data_Access_Layer.Migrations
                         .HasColumnType("varchar(11)");
 
                     b.HasIndex("CityId");
+
+                    b.HasIndex("ClientId");
 
                     b.ToTable("Customers", "dbo");
                 });
@@ -627,23 +648,30 @@ namespace Risk_Data_Access_Layer.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Risk_Data_Access_Layer.Models.Call", b =>
+            modelBuilder.Entity("Risk_Data_Access_Layer.Models.AgentClient", b =>
                 {
-                    b.HasOne("Risk_Data_Access_Layer.Models.CallReason", "CallReason")
+                    b.HasOne("Risk_Data_Access_Layer.Models.Employee", "Employees")
                         .WithMany()
-                        .HasForeignKey("CallReasonId")
+                        .HasForeignKey("AgentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Risk_Data_Access_Layer.Models.Client", "Client")
+                    b.HasOne("Risk_Data_Access_Layer.Models.Client", "Clients")
                         .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Risk_Data_Access_Layer.Models.Employee", "Employees")
+                    b.Navigation("Clients");
+
+                    b.Navigation("Employees");
+                });
+
+            modelBuilder.Entity("Risk_Data_Access_Layer.Models.Call", b =>
+                {
+                    b.HasOne("Risk_Data_Access_Layer.Models.CallReason", "CallReason")
                         .WithMany()
-                        .HasForeignKey("CustomerServiceId")
+                        .HasForeignKey("CallReasonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -660,10 +688,6 @@ namespace Risk_Data_Access_Layer.Migrations
                         .IsRequired();
 
                     b.Navigation("CallReason");
-
-                    b.Navigation("Client");
-
-                    b.Navigation("Employees");
 
                     b.Navigation("SourceMarketing");
 
@@ -763,6 +787,12 @@ namespace Risk_Data_Access_Layer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Risk_Data_Access_Layer.Models.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Risk_Data_Access_Layer.Models.ApplicationUser", null)
                         .WithOne()
                         .HasForeignKey("Risk_Data_Access_Layer.Models.Customer", "Id")
@@ -770,6 +800,8 @@ namespace Risk_Data_Access_Layer.Migrations
                         .IsRequired();
 
                     b.Navigation("City");
+
+                    b.Navigation("Client");
                 });
 
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.Employee", b =>

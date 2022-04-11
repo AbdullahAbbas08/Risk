@@ -87,14 +87,16 @@ namespace Risk.Controllers
                 return await callBusiness.AddAsync(new Call {
                     CallReasonId =model.CallReasonId,
                     SourceMarketId = model.SourceMarketId,
-                    Start = model.Start,
-                    End = model.End,
+                    StartCall = Convert.ToDateTime(model.StartCall),
+                    EndCall = Convert.ToDateTime(model.EndCall),
                     Description = model.Description,
                     Notes = model.Notes,
                     CallType = model.CallType,
                     Reason = model.Reason,
                     Satisfy = model.Satisfy ,
-                    customerId = model.customerId
+                    customerId = model.customerId,
+                    CustomerServiceId= model.AgentId,
+                    ClientId = model.ClientId,
                     });
             }
             catch (Exception ex)

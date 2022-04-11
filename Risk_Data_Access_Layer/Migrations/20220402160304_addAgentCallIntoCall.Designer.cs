@@ -12,8 +12,8 @@ using Risk_Data_Access_Layer;
 namespace Risk_Data_Access_Layer.Migrations
 {
     [DbContext(typeof(RiskDbContext))]
-    [Migration("20220401173018_Am")]
-    partial class Am
+    [Migration("20220402160304_addAgentCallIntoCall")]
+    partial class addAgentCallIntoCall
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -323,11 +323,15 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CustomerServiceId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("End")
+                    b.Property<DateTime>("EndCall")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Notes")
@@ -344,7 +348,7 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.Property<int>("SourceMarketId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Start")
+                    b.Property<DateTime>("StartCall")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("customerId")
@@ -354,6 +358,8 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CallReasonId");
+
+                    b.HasIndex("CustomerServiceId");
 
                     b.HasIndex("SourceMarketId");
 
@@ -675,6 +681,12 @@ namespace Risk_Data_Access_Layer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Risk_Data_Access_Layer.Models.Employee", "Employees")
+                        .WithMany()
+                        .HasForeignKey("CustomerServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Risk_Data_Access_Layer.Models.SourceMarketing", "SourceMarketing")
                         .WithMany()
                         .HasForeignKey("SourceMarketId")
@@ -688,6 +700,8 @@ namespace Risk_Data_Access_Layer.Migrations
                         .IsRequired();
 
                     b.Navigation("CallReason");
+
+                    b.Navigation("Employees");
 
                     b.Navigation("SourceMarketing");
 

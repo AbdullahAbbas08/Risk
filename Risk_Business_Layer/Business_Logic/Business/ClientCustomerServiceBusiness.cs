@@ -63,7 +63,7 @@ namespace Risk_Business_Layer.Business_Logic.Business
 
         public async Task<GeneralResponse<GetEmployeeDto>> GetAllAgentRelatedWithOneClient(string Id)
         {
-            var CustomerSeriveClient = (await unitOfWork.ClientCustomerServise.Find(x => x.ClientId == Id)).Select(x=>x.CustomerId).ToList();
+            var CustomerSeriveClient = (await unitOfWork.ClientCustomerServise.Find(x => x.ClientId == Id )).Select(x=>x.CustomerId).ToList();
             var CustomerService = (await unitOfWork.Employee.Find(x=> CustomerSeriveClient.Contains(x.Id))).ToList();
 
             GeneralResponse<GetEmployeeDto> res = new GeneralResponse<GetEmployeeDto>();

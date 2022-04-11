@@ -8,32 +8,58 @@ namespace Risk.Controllers
     public class AdminController : ControllerBase
     {
         #region Decalre Variables
-        private readonly IAgentClientBusiness AgentClientBusiness;
         private readonly IAdminBusiness adminBusiness;
         #endregion
 
         #region Constructor
-        public AdminController(IAgentClientBusiness agentClient , IAdminBusiness adminBusiness)
+        public AdminController( IAdminBusiness adminBusiness)
         {
-            this.AgentClientBusiness = agentClient;
             this.adminBusiness = adminBusiness;
         }
         #endregion
 
-        #region Define API's => Call Methods Form Business Project 
+        //#region Define API's => Call Methods Form Business Project 
 
-        [HttpPost]
-        public async Task<GeneralResponseSingleObject<AgentClient>> AssignClientsToAgent(AddAgentClientDto agentClient)
-        {
-            return await AgentClientBusiness.AssginClientToAgent( new AgentClient {AgentId = agentClient.AgentId,ClientId = agentClient.ClientId });
-
-        }
-        #endregion
+        //[HttpPost]
+        //public async Task<GeneralResponseSingleObject<AgentClient>> AssignClientsToAgent(AddAgentClientDto agentClient)
+        //{
+        //    try
+        //    {
+        //        return await AgentClientBusiness.AssginClientToAgent(new AgentClient { AgentId = agentClient.AgentId, ClientId = agentClient.ClientId });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex.InnerException;
+        //    }
+        //}
+        //#endregion
 
         [HttpPost("ClientCallReport")]
         public async Task<GeneralResponse<ClientCallSearchResultReportDto>> ClientCallReport(ClientCallSearchInputReportDto model)
         {
-            return await adminBusiness.ClientCallReport(model);
+            try
+            {
+                return await adminBusiness.ClientCallReport(model);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex.InnerException;
+            }
+        }
+        
+        [HttpPost("CallStartEnd")]
+        public async Task<GeneralResponse<ClientCallSearchResultReportDto>> Call_Start_End_Report(CallStart_End_Report_Dto model)
+        {
+            try
+            {
+                return await adminBusiness.Call_Start_End_Report(model);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex.InnerException;
+            }
         }
     }
 }

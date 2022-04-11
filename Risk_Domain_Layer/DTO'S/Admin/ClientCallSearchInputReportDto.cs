@@ -16,5 +16,6 @@ namespace Risk_Domain_Layer.DTO_S.Admin
         public int? CallReasons { get; set; }
         public DateTime? CallDateFrom { get; set; }
         public DateTime? CallDateTo { get; set; } 
-    }  
+    }
+
 }

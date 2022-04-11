@@ -29,13 +29,17 @@
         [Required]
         public DateTime CreationDate { get; set; } = DateTime.Now;
 
-        public DateTime Start { get; set; }
+        public DateTime StartCall { get; set; }
 
-        public DateTime End { get; set; }
+        public DateTime EndCall { get; set; }
+
+
 
 
         [ForeignKey("SourceMarketId"),JsonIgnore]
         public SourceMarketing SourceMarketing { get; set; }
+
+
 
         public int CallReasonId { get; set; }
 
@@ -46,9 +50,21 @@
         [Column(TypeName = "nvarchar(450)")]
         public string customerId { get; set; }
 
-
         [ForeignKey("customerId")]
         public Customer customer { get; set; }
 
+        [Column(TypeName = "nvarchar(450)")]
+        public string CustomerServiceId { get; set; }
+
+        [ForeignKey("CustomerServiceId"), JsonIgnore]
+        public Employee Employees { get; set; }
+
+
+        [Column(TypeName = "nvarchar(450)")]
+        public string ClientId { get; set; }
+        [ForeignKey("ClientId"), JsonIgnore]
+        public Client Client { get; set; }
+
     }
 }
+ 

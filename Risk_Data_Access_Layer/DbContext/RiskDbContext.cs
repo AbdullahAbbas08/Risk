@@ -4,7 +4,7 @@
     {
         public RiskDbContext(DbContextOptions<RiskDbContext> options):base(options)
         {
-            
+           
         }
 
         public DbSet<CallReason> CallReasons { get; set; }
@@ -17,7 +17,6 @@
         public DbSet<Customer> Customers { get; set; }
         public DbSet<MobilePhone> MobilePhones { get; set; } 
         public DbSet<Call> Call { get; set; } 
-        public DbSet<AgentClient> AgentClients { get; set; }   
         public DbSet<ClientCustomerServise> ClientCustomerServise { get; set; }      
         public DbSet<CallReasonClientType> CallReasonClientType { get; set; }       
         //public DbSet<CustomerPhones> CustomerPhones { get; set; }        

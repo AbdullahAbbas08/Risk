@@ -31,7 +31,6 @@ builder.Services.AddControllers();
 builder.Services.AddTransient(typeof(ICrud<>), typeof(Crud<>));
 builder.Services.AddTransient<IUnitOfWork_Crud, UnitOfWork_Crud>();
 builder.Services.AddTransient<ICallReasonBusiness<CallReason>, CallReasonBusiness>();
-builder.Services.AddTransient<IAgentClientBusiness, AgentClientBusiness>();
 builder.Services.AddTransient<ICityBusiness<City>, CityBusiness>();
 builder.Services.AddTransient<IGovernorateBusiness<Governorate>, GovernorateBusiness>();
 builder.Services.AddTransient<ISourceMarketingBusiness<SourceMarketing>, SourceMarketingBusiness>();
@@ -64,7 +63,10 @@ builder.Services.AddCors();
 #endregion
 
 #region Add Context
-builder.Services.AddDbContext<RiskDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<RiskDbContext>(options => options.UseSqlServer(
+    builder.Configuration.GetConnectionString("DefaultConnection"),options =>
+    {options.CommandTimeout(180); // 3 minutes
+     } ));
 #endregion
 
 #region Swagger Configurations

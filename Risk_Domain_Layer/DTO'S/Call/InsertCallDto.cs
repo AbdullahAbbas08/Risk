@@ -19,15 +19,18 @@ namespace Risk_Domain_Layer.DTO_S.Call
 
         public DateTime CreationDate { get; set; } = DateTime.Now;
 
-        public DateTime Start { get; set; }
+        public string StartCall { get; set; }
 
-        public DateTime End { get; set; }
+        public string EndCall { get; set; }
 
         public int CallReasonId { get; set; }
         public int CallType { get; set; }
 
         public int SourceMarketId { get; set; }
         public string customerId { get; set; }
-
+        public string AgentId { get; set; }
+        public string ClientId { get; set; }
+         
     }
 }
+ 

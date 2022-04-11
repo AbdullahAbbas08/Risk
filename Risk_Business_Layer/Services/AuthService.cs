@@ -326,7 +326,6 @@ namespace Risk_Business_Layer.Services
                     Address = model.Address,
                     UserName = "Customer" + Guid.NewGuid().ToString(),
                     Mobile = model.MobileNumber,
-                    ClientId = model.clientId,
                     Mobile2 = model.MobileNumber2,
                     Phone = model.Phone,
                 };
@@ -389,7 +388,7 @@ namespace Risk_Business_Layer.Services
             #region Check If UserName & Passowrd  =>  True
             if (user is null || !await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                authModel.Message = "UserName or Password is incorrect!";
+                authModel.Message = "Username or Password is incorrect!";
                 return authModel;
             }
             #endregion
@@ -405,6 +404,7 @@ namespace Risk_Business_Layer.Services
             authModel.Username = user.UserName;
             authModel.ExpiresOn = jwtSecurityToken.ValidTo;
             authModel.Role = roles[0].ToString();
+            authModel.Id = user.Id;
             #endregion
 
             #region return Object typeOf AuthModel

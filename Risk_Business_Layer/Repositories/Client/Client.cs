@@ -79,6 +79,9 @@ namespace Risk_Business_Layer.Repositories.Client
                password = x.PasswordHash
            }).ToListAsync();
 
+            if (ClientType == -1)
+                ClientType = null;
+
             var clients = (from item in Query
                           where (item.Name == ClientName || ClientName is null) &&
                                 (item.Mobile == Mobile || Mobile is null) &&
