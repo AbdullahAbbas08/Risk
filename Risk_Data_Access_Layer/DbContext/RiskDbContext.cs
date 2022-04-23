@@ -18,8 +18,10 @@
         public DbSet<MobilePhone> MobilePhones { get; set; } 
         public DbSet<Call> Call { get; set; } 
         public DbSet<ClientCustomerServise> ClientCustomerServise { get; set; }      
-        public DbSet<CallReasonClientType> CallReasonClientType { get; set; }       
-        //public DbSet<CustomerPhones> CustomerPhones { get; set; }        
+        public DbSet<CallReasonClientType> CallReasonClientType { get; set; }        
+        public DbSet<AgentReportResponseSP> AgentReportResponseSP { get; set; }       
+        public DbSet<CallReasonReportResponseSP> CallReasonReportResponseSP { get; set; }       
+        //public DbSet<CustomerPhones> CustomerPhones { get; set; }         
          
         protected override void OnModelCreating(ModelBuilder builder)
         {

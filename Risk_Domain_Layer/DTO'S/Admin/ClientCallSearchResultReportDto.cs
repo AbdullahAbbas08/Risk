@@ -25,5 +25,7 @@
         public DateTime DOB { get; set; }
         public DateTime CallStart { get; set; }
         public DateTime CallEnd { get; set; }
+        public TimeSpan Duration { get; set; }
+
     }
 }

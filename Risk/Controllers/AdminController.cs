@@ -61,5 +61,29 @@ namespace Risk.Controllers
                 throw ex.InnerException;
             }
         }
+   
+        [HttpGet("Stats_Report")]
+        public async Task<GeneralResponse<Stats>> Stats_Report( )
+        {
+            int day = (int)DateTime.Now.Day;
+            int month =  DateTime.Now.Month;
+            int year =  DateTime.Now.Year;
+            return await adminBusiness.Stats_Report(day , month , year);    
+        } 
+        
+        [HttpGet("Agent_Report")]
+        public async Task<List<AgentReportResponseSP>> Agent_Report(int f )
+        {
+            var res =  await adminBusiness.Agent_Report(f);   
+            return res; 
+        }
+        
+        [HttpGet("CallReason_Report")]
+        public async Task<List<CallReasonReportResponseSP>> CallReason_Report(int f )
+        {
+            var res =  await adminBusiness.CallReason_Report(f);   
+            return res; 
+        }
     }
-}
+} 
+ 

@@ -1,5 +1,5 @@
 ﻿namespace Risk_Data_Access_Layer.Constants
-{ 
+{
     public static class Roles
     {
         public const string Admin = "Admin";

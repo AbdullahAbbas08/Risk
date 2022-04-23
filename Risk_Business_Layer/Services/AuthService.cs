@@ -405,6 +405,7 @@ namespace Risk_Business_Layer.Services
             authModel.ExpiresOn = jwtSecurityToken.ValidTo;
             authModel.Role = roles[0].ToString();
             authModel.Id = user.Id;
+            authModel.Name = user.Name;
             #endregion
 
             #region return Object typeOf AuthModel

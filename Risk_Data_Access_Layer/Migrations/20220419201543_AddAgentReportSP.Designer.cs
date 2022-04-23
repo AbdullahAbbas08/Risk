@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Risk_Data_Access_Layer;
 
@@ -11,9 +12,10 @@ using Risk_Data_Access_Layer;
 namespace Risk_Data_Access_Layer.Migrations
 {
     [DbContext(typeof(RiskDbContext))]
-    partial class RiskDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220419201543_AddAgentReportSP")]
+    partial class AddAgentReportSP
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -216,8 +218,9 @@ namespace Risk_Data_Access_Layer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NumberOfCall")
-                        .HasColumnType("int");
+                    b.Property<string>("NumberOfCall")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.ToTable("AgentReportResponseSP");
                 });
@@ -412,21 +415,6 @@ namespace Risk_Data_Access_Layer.Migrations
                     b.HasIndex("ClientTypeId");
 
                     b.ToTable("CallReasonClientType");
-                });
-
-            modelBuilder.Entity("Risk_Data_Access_Layer.Models.CallReasonReportResponseSP", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberOfCall")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.ToTable("CallReasonReportResponseSP");
                 });
 
             modelBuilder.Entity("Risk_Data_Access_Layer.Models.City", b =>
