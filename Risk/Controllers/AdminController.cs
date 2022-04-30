@@ -84,6 +84,13 @@ namespace Risk.Controllers
             var res =  await adminBusiness.CallReason_Report(f);   
             return res; 
         }
+        
+        [HttpGet("GraphData")]
+        public async Task<GraphDataDto> GraphData(int flag )
+        {
+            var res =  await adminBusiness.GraphData(flag);   
+            return res; 
+        }
     }
 } 
  

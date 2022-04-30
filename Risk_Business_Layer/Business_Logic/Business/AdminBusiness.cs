@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace Risk_Business_Layer.Business_Logic.Business
 {
@@ -396,9 +397,9 @@ namespace Risk_Business_Layer.Business_Logic.Business
             StatList.Add (Day);
 
             Stats Month = new Stats();
-            Month.All = CallSummery.Where(x => x.CreationDate.Date <= DateTime.Now && x.CreationDate.Date >= DateToMonth).Count();
-            Month.In  = CallSummery.Where(x => x.CreationDate.Date <= DateTime.Now && x.CreationDate.Date >= DateToMonth && x.CallType == CallType.In).Count();
-            Month.Out = CallSummery.Where(x => x.CreationDate.Date <= DateTime.Now && x.CreationDate.Date >= DateToMonth && x.CallType == CallType.Out).Count();
+            Month.All = CallSummery.Where(x => x.CreationDate.Date >= DateToMonth).Count();
+            Month.In  = CallSummery.Where(x => x.CreationDate.Date >= DateToMonth && x.CallType == CallType.In).Count();
+            Month.Out = CallSummery.Where(x => x.CreationDate.Date >= DateToMonth && x.CallType == CallType.Out).Count();
 
             StatList.Add(Month);
 
@@ -411,6 +412,233 @@ namespace Risk_Business_Layer.Business_Logic.Business
 
             return new GeneralResponse<Stats> { Data = StatList };
 
+        }
+        
+        public async Task<GraphDataDto> GraphData(int f)
+        {
+            if(f == GraphDataDuration.Daily)
+            {
+                DateTime datetime = DateTime.Now;
+                DateTime dateWithHour = new DateTime(   int.Parse(datetime.Year.ToString()), 
+                                                        int.Parse(datetime.Month.ToString()), 
+                                                        int.Parse(datetime.Day.ToString()), 
+                                                        0, 0, 0);
+                TimeOnly time = new TimeOnly(0,0,0);
+                GraphDataDto result = new GraphDataDto();
+                result.ClientTypeCount = riskDbContext.ClientTypes.Count();
+                result.ClientCount = riskDbContext.Clients.Count();
+                result.EmployeeCount = riskDbContext.employees.Count();
+                result.CallCount = riskDbContext.Call.Count(x => x.CreationDate >= dateWithHour);
+                result.CallInCount = riskDbContext.Call.Count(x => x.CallType == CallTypes.In && x.CreationDate >= dateWithHour);
+                result.CallOutCount = riskDbContext.Call.Count(x => x.CallType == CallTypes.Out && x.CreationDate >= dateWithHour);
+
+
+
+                var Query = riskDbContext.Call
+                            .Where(item => item.CreationDate >= dateWithHour)
+                            .GroupBy(y => new { y.CreationDate.Hour })
+                            .Select(x => new GraphDataTime
+                            {
+                                Count = x.Count(),
+                                CallInCount = x.Count(a => a.CallType == CallTypes.In),
+                                CallOutCount = x.Count(b => b.CallType == CallTypes.Out),
+                                DurationNumber = x.Key.Hour,
+                                date = new DateTime( int.Parse(datetime.Year.ToString()), 
+                                                     int.Parse(datetime.Month.ToString()), 
+                                                     int.Parse(datetime.Day.ToString()),
+                                                     x.Key.Hour,0,0 )
+                            }).ToList();
+
+                TimeSpan span = DateTime.Now.Subtract(dateWithHour);
+
+                for (int i = 1; i <= span.Hours; i++)
+                {
+                    var compared_date = dateWithHour.AddHours(i - 1);
+                    GraphDataTime day = Query.Find(x => x.date.Hour == compared_date.Hour);
+                    if (day != null)
+                    {
+                        result.CallIn.Add(day.CallInCount);
+                        result.CallOut.Add(day.CallOutCount);
+                    }
+                    else
+                    {
+                        result.CallIn.Add(0);
+                        result.CallOut.Add(0);
+                    }
+                    result.CallName.Add(time.AddHours(i - 1).ToString());
+
+                }
+
+
+                result.GraphDataTime = Query;
+                return result;
+            }
+            else if(f == GraphDataDuration.Monthly)
+            {
+                DateTime datetime = DateTime.Now.AddMonths(-1).AddDays(1);
+                int dateMonthyear = datetime.Year;
+                int dateMonthmonth = datetime.Month;
+                int dateMonthday = datetime.Day;
+                DateTime DayCondtion = new DateTime(dateMonthyear, dateMonthmonth, dateMonthday, 12, 0, 0);
+                int yearp = datetime.Year; 
+                int monthp = datetime.Month;
+                int dayp = datetime.Day;
+                DateOnly disp = new DateOnly(yearp, monthp, dayp);
+
+                GraphDataDto result = new GraphDataDto();
+                result.ClientTypeCount = riskDbContext.ClientTypes.Count();
+                result.ClientCount = riskDbContext.Clients.Count();
+                result.EmployeeCount = riskDbContext.employees.Count();
+                result.CallCount = riskDbContext.Call.Count(x => x.CreationDate >= DayCondtion);
+                result.CallInCount = riskDbContext.Call.Count(x => x.CallType == CallTypes.In && x.CreationDate >= DayCondtion);
+                result.CallOutCount = riskDbContext.Call.Count(x => x.CallType == CallTypes.Out && x.CreationDate >= DayCondtion);
+
+
+
+                var Query = riskDbContext.Call
+                            .Where(item => item.CreationDate >= DayCondtion)
+                            .GroupBy(y => new { y.CreationDate.Month,y.CreationDate.Day })
+                            .Select(x => new GraphDataTime
+                            {
+                                Count = x.Count(),
+                                CallInCount = x.Count(a => a.CallType == CallTypes.In),
+                                CallOutCount = x.Count(b => b.CallType == CallTypes.Out),
+                                DurationNumber = x.Key.Day,
+                                date = new DateTime(datetime.Year, x.Key.Month, x.Key.Day)
+                            }).ToList();
+
+                int year = datetime.Year;
+                int month = datetime.Month;
+                int DaysCount = DateTime.DaysInMonth(year, month);
+
+                for (int i = 1; i <= DaysCount; i++)
+                {
+                    var compared_date = DayCondtion.AddDays(i - 1);
+                    GraphDataTime day = Query.Find(x => x.date.Date == compared_date.Date);
+                    if (day != null)
+                    {
+                        result.CallIn.Add(day.CallInCount);
+                        result.CallOut.Add(day.CallOutCount);
+                    }
+                    else
+                    {
+                        result.CallIn.Add(0);
+                        result.CallOut.Add(0);
+                    }
+                    result.CallName.Add(disp.AddDays(i - 1).ToString());
+                }
+
+
+                result.GraphDataTime = Query;
+                return result;
+            }
+            else if(f == GraphDataDuration.Yealy)
+            {
+                DateTime datetime = DateTime.Now.AddMonths(1);
+                int year = datetime.Year - 1;
+                int month = datetime.Month;
+                DateTime date_Month = new DateTime(year ,month , 1);
+                DateOnly disp = new DateOnly(year, month, 1);
+
+                GraphDataDto result = new GraphDataDto();
+                result.ClientTypeCount = riskDbContext.ClientTypes.Count();
+                result.ClientCount = riskDbContext.Clients.Count();
+                result.EmployeeCount = riskDbContext.employees.Count();
+                result.CallCount = riskDbContext.Call.Count(x => x.CreationDate >= date_Month);
+                result.CallInCount = riskDbContext.Call.Count(x => x.CallType == CallTypes.In && x.CreationDate >= date_Month);
+                result.CallOutCount = riskDbContext.Call.Count(x => x.CallType == CallTypes.Out && x.CreationDate >= date_Month);
+
+
+
+                var Query =( riskDbContext.Call
+                            .Where(item => item.CreationDate >= date_Month)
+                            .GroupBy(y => new { y.CreationDate.Year, y.CreationDate.Month })
+                            .Select(x => new GraphDataTime
+                            {
+                                Count = x.Count(),
+                                CallInCount = x.Count(a => a.CallType == CallTypes.In),
+                                CallOutCount = x.Count(b => b.CallType == CallTypes.Out),
+                                DurationNumber = x.Key.Month,
+                                date = new DateTime(x.Key.Year, x.Key.Month, 1)
+                            })).ToList();
+                for (int i = 1; i <= 12; i++)
+                {
+                    var compared_date = date_Month.AddMonths(i - 1);
+                    GraphDataTime Duration = new();
+                    Duration = Query.Find(x => x.date == compared_date);
+
+                    if (Duration != null)
+                    {
+                        result.CallIn.Add(Duration.CallInCount);
+                        result.CallOut.Add(Duration.CallOutCount);
+                    }
+                    else
+                    {
+                        result.CallIn.Add(0);
+                        result.CallOut.Add(0);
+                    }
+                    result.CallName.Add(disp.AddMonths(i-1).ToString());
+                }
+
+                result.GraphDataTime = Query;
+                return result;
+            }
+            else
+            {
+
+                GraphDataDto result = new GraphDataDto();
+                result.ClientTypeCount = riskDbContext.ClientTypes.Count();
+                result.ClientCount = riskDbContext.Clients.Count();
+                result.EmployeeCount = riskDbContext.employees.Count();
+                result.CallCount = riskDbContext.Call.Count();
+                result.CallInCount = riskDbContext.Call.Count(x => x.CallType == CallTypes.In);
+                result.CallOutCount = riskDbContext.Call.Count(x => x.CallType == CallTypes.Out);
+
+                var ListOfCalls = riskDbContext.Call.ToList().OrderBy(x => x.CreationDate);
+                DateTime startDate = ListOfCalls.First().CreationDate;  
+                DateTime EndDate   = ListOfCalls.Last().CreationDate;
+
+                //((date1.Year - date2.Year) * 12) + date1.Month - date2.Month
+                var DiffByMonth = ((EndDate.Year - startDate.Year )*12 + ( EndDate.Month - startDate.Month));
+
+                int year = startDate.Year ;
+                int month = startDate.Month;
+                DateOnly disp = new DateOnly(year, month, 1);
+
+                var Query = riskDbContext.Call
+                            .GroupBy(y => new { y.CreationDate.Year, y.CreationDate.Month })
+                            .Select(x =>
+                            new GraphDataTime
+                            {
+                                Count = x.Count(),
+                                CallInCount = x.Count(a => a.CallType == CallTypes.In),
+                                CallOutCount = x.Count(b => b.CallType == CallTypes.Out),
+                                date = new DateTime(x.Key.Year, x.Key.Month, 1)
+            }).ToList();
+
+                DateTime ConditionDate = new DateTime(year,month,1);
+                for (int i = 1; i <= DiffByMonth+1; i++)
+                {
+                    GraphDataTime Duration = Query.Find(x => x.date.Year == ConditionDate.Year && 
+                                                             x.date.Month == ConditionDate.Month);
+                    if (Duration != null)
+                    {
+                        result.CallIn.Add(Duration.CallInCount);
+                        result.CallOut.Add(Duration.CallOutCount);
+                    }
+                    else
+                    {
+                        result.CallIn.Add(0);
+                        result.CallOut.Add(0);
+                    }
+                    result.CallName.Add(disp.AddMonths(i - 1).ToString());
+                    ConditionDate = ConditionDate.AddMonths(1);
+                }
+
+
+                result.GraphDataTime = Query;
+                return result;
+            }
         }
     }
 }
